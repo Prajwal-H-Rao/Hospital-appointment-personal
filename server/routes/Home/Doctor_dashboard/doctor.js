@@ -56,14 +56,9 @@ router.post("/prescriptions", (req, res) => {
 // Delete appointment request using appointment_id
 router.delete("/requests/appointment/:appointment_id", (req, res) => {
   const { appointment_id } = req.params;
-
+  console.log(appointment_id);
   const query = `
-    DELETE FROM APPOINTMENT_REQUESTS
-    WHERE (name, contact, appointment_date) IN (
-      SELECT patient_name, patient_contact, appointment_date
-      FROM APPOINTMENTS
-      WHERE appointment_id = ?
-    )
+     DELETE FROM APPOINTMENT_REQUESTS WHERE (name,contact) in (select patient_name,patient_contact from APPOINTMENTS where appointment_id=?)
   `;
 
   db.query(query, [appointment_id], (err, result) => {

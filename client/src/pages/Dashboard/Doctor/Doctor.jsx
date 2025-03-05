@@ -34,6 +34,7 @@ const DoctorDashboard = () => {
             },
           }
         );
+        console.log(response.data);
         setAppointments(response.data);
       } catch (error) {
         setMessage({ type: "error", content: "Failed to fetch appointments" });
