@@ -4,6 +4,7 @@ const db = require("../../../database/db.js");
 const router = express.Router();
 
 // Get all appointment requests
+// (MAY NEED TO HANDLE EMPTY APPOINTMENT REQUESTS LATER)
 router.get("/requests", (req, res) => {
   const query =
     "SELECT * FROM APPOINTMENT_REQUESTS WHERE request_status = 'pending'";

@@ -7,6 +7,7 @@ const db = require("./database/db");
 const authRouter = require("./routes/Auth/login");
 const appointmentRouter = require("./routes/Home/Appointment_Page/appointment");
 const nurseRouter = require("./routes/Home/Nurse_Dashboard/nurse");
+const doctorRoute = require("./routes/Home/Doctor_dashboard/doctor");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", authRouter);
 app.use("/appointment", appointmentRouter);
 app.use("/manage", nurseRouter);
+app.use("/treat", doctorRoute);
 
 db.query("SELECT 1", (err) => {
   if (err) {
