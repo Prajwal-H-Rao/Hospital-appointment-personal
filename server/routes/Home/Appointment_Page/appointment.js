@@ -18,7 +18,7 @@ router.post("/request", (req, res) => {
   const date = new Date(appointment_date).toISOString().split("T")[0];
   const time =
     appointment_time.length === 5 ? `${appointment_time}:00` : appointment_time;
-
+  console.log(req.body);
   // SQL query
   const query = `
     INSERT INTO APPOINTMENT_REQUESTS (

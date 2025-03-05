@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const AppointmentForm = () => {
   const [formData, setFormData] = useState({
@@ -12,23 +13,42 @@ const AppointmentForm = () => {
   });
   const [message, setMessage] = useState({ type: "", content: "" });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("uploaded");
-    setMessage({
-      type: "success",
-      content: "Appointment requested successfully!",
-    });
-    // Reset form
-    setFormData({
-      name: "",
-      contact: "",
-      appointment_date: "",
-      appointment_time: "",
-      gender: "",
-      age: "",
-      department: "",
-    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/appointment/request",
+        formData
+      );
+
+      // Handle successful response
+      setMessage({
+        type: "success",
+        content: response.data.message || "Appointment requested successfully!",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        contact: "",
+        appointment_date: "",
+        appointment_time: "",
+        gender: "",
+        age: "",
+        department: "",
+      });
+    } catch (error) {
+      // Handle error response
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to book appointment. Please try again.";
+
+      setMessage({
+        type: "error",
+        content: errorMessage,
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -141,9 +161,9 @@ const AppointmentForm = () => {
                 required
               >
                 <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
               </select>
             </div>
 
@@ -181,11 +201,11 @@ const AppointmentForm = () => {
                 required
               >
                 <option value="">Select Department</option>
-                <option value="cardiology">Cardiology</option>
-                <option value="neuroscience">Neuroscience</option>
-                <option value="pediatrics">Pediatrics</option>
-                <option value="orthopedics">Orthopedics</option>
-                <option value="general-surgery">General Surgery</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="General-Medicine">General-Medicine</option>
               </select>
             </div>
           </div>
