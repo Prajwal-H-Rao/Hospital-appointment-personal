@@ -108,7 +108,7 @@ const DoctorDashboard = () => {
         const token = Cookies.get("authToken");
 
         await axios.delete(
-          `http://localhost:3000/treat/appointment/${appointmentId}`,
+          `http://localhost:3000/treat/requests/appointment/${appointmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -174,15 +174,17 @@ const DoctorDashboard = () => {
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Appointments
           </h2>
-          <div className="flex-1 overflow-y-scroll">
+          <div className="flex-1 ">
             <div className="h-full max-h-[calc(100vh-200px)] overflow-y-auto">
-              <table className="w-full">
+              <table className="w-full ">
                 <thead className="sticky top-0 bg-white z-10">
                   <tr className="border-b-2 border-amber-100">
-                    <th className="text-left py-3 px-4">Patient</th>
-                    <th className="text-left py-3 px-4">Date</th>
-                    <th className="text-left py-3 px-4">Time</th>
-                    <th className="text-left py-3 px-4">Actions</th>
+                    <th className="text-center py-3 px-4">
+                      <span className="w-1"></span>Patient
+                    </th>
+                    <th className="text-center py-3 px-4">Date</th>
+                    <th className="text-center py-3 px-4">Time</th>
+                    <th className="text-center py-3 px-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -191,16 +193,18 @@ const DoctorDashboard = () => {
                       key={appointment.appointment_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td className="py-3 px-4">{appointment.patient_name}</td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 text-center">
+                        {appointment.patient_name}
+                      </td>
+                      <td className="py-3 px-4 text-center">
                         {new Date(
                           appointment.appointment_date
                         ).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 text-center">
                         {appointment.appointment_time}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 text-center">
                         <button
                           onClick={() =>
                             handleDeleteAppointment(appointment.appointment_id)
@@ -229,54 +233,59 @@ const DoctorDashboard = () => {
           >
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">
-                Select Appointment
+                <div className="inline-block w-[1rem]"></div>Select Appointment
               </label>
-              <select
-                value={prescription.appointment_id}
-                onChange={(e) =>
-                  setPrescription({
-                    ...prescription,
-                    appointment_id: e.target.value,
-                  })
-                }
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-amber-400"
-                required
-              >
-                <option value="">Select an appointment</option>
-                {appointments.map((appointment) => (
-                  <option
-                    key={appointment.appointment_id}
-                    value={appointment.appointment_id}
-                  >
-                    {appointment.patient_name} -{" "}
-                    {new Date(
-                      appointment.appointment_date
-                    ).toLocaleDateString()}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <div className="inline-block w-4"></div>
+                <select
+                  value={prescription.appointment_id}
+                  onChange={(e) =>
+                    setPrescription({
+                      ...prescription,
+                      appointment_id: e.target.value,
+                    })
+                  }
+                  className="w-4/5 h-[2.5rem] p-2 border rounded-md "
+                  required
+                >
+                  <option value="">Select an appointment</option>
+                  {appointments.map((appointment) => (
+                    <option
+                      key={appointment.appointment_id}
+                      value={appointment.appointment_id}
+                    >
+                      {appointment.patient_name} -{" "}
+                      {new Date(
+                        appointment.appointment_date
+                      ).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="flex-1 overflow-hidden">
               <div className="h-full max-h-[calc(100vh-300px)] overflow-y-auto">
-                <table className="w-full">
+                <table className="w-full  min-h-fu">
                   <thead className="sticky top-0 bg-white z-10">
-                    <tr className="border-b-2 border-amber-100">
-                      <th className="text-left py-3 px-4">Medicine</th>
-                      <th className="text-left py-3 px-4">Dosage</th>
+                    <tr className="">
+                      <th className="text-center py-3 px-4">Medicine</th>
+                      <th className="text-center py-3 px-4">Dosage</th>
+                      <th className="text-center py-3 px-4">Dosage</th>
                     </tr>
                   </thead>
                   <tbody>
                     {prescription.medicines.map((medicine, index) => (
                       <tr key={index} className="border-b border-amber-50">
                         <td className="py-2 px-4">
+                          <div className="h-full inline-block w-4" />
                           <input
                             type="text"
                             name="medicine_name"
                             placeholder="Medicine name"
                             value={medicine.medicine_name}
                             onChange={(e) => handlePrescriptionChange(index, e)}
-                            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-amber-400"
+                            className="w-10/12 p-2 border-b focus:outline-none"
                             required
                           />
                         </td>
@@ -287,9 +296,26 @@ const DoctorDashboard = () => {
                             placeholder="Dosage"
                             value={medicine.medicine_dosage}
                             onChange={(e) => handlePrescriptionChange(index, e)}
-                            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-amber-400"
+                            className="w-10/12 p-2 border-b focus:outline-none"
                             required
                           />
+                        </td>
+                        <td className="py-2 px-4 text-center">
+                          <button
+                            onClick={() => {
+                              const newMedicines =
+                                prescription.medicines.filter(
+                                  (_, i) => i !== index
+                                );
+                              setPrescription({
+                                ...prescription,
+                                medicines: newMedicines,
+                              });
+                            }}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
