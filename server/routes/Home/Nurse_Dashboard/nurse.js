@@ -4,6 +4,57 @@ const db = require("../../../database/db.js");
 const router = express.Router();
 
 // Get all appointment requests
+router.get("/nurse/:nurseId", async (req, res) => {
+  try {
+    const { nurseId } = req.params;
+
+    const query = `
+      SELECT 
+        appointment_id,
+        patient_name,
+        patient_contact,
+        appointment_date,
+        appointment_time,
+        gender,
+        age,
+        critical,
+        payment_status,
+        payment_amount,
+        payment_type,
+        appointment_status
+      FROM APPOINTMENTS
+      WHERE nurse_id = ? AND appointment_status='approved' OR payment_status='pending'
+      ORDER BY appointment_date DESC, appointment_time DESC
+    `;
+
+    db.query(query, [nurseId], (err, results) => {
+      if (err) {
+        console.error("Error fetching nurse appointments:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to fetch appointments",
+        });
+      }
+
+      // Format dates to ISO string
+      const formattedResults = results.map((appointment) => ({
+        ...appointment,
+        appointment_date: new Date(appointment.appointment_date).toISOString(),
+      }));
+
+      res.status(200).json({
+        success: true,
+        data: formattedResults,
+      });
+    });
+  } catch (error) {
+    console.error("Error in nurse appointments route:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
 // (MAY NEED TO HANDLE EMPTY APPOINTMENT REQUESTS LATER)
 router.get("/requests", (req, res) => {
   const query =
@@ -12,12 +63,46 @@ router.get("/requests", (req, res) => {
   db.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching appointment requests:", err);
-      return res.status(500).json({ message: "Failed to fetch requests" });
+      return res.status(500).json({
+        message: "Failed to fetch requests",
+        error: err.message, // Include error details for debugging
+      });
     }
-    res.status(200).json(results);
+
+    // Ensure we always return an array, even for empty results
+    const safeResults = Array.isArray(results) ? results : [];
+
+    res.status(200).json(safeResults);
   });
 });
 
+router.get("/doctors", (req, res) => {
+  const query = `
+    SELECT 
+      doctor_id,
+      doctor_name AS name,
+      doctor_specialization AS department,
+      doctor_specialization AS specialization,
+      doctor_contact AS contact
+    FROM DOCTORS
+    ORDER BY doctor_specialization, doctor_name
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching doctors:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch doctors list",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: results,
+    });
+  });
+});
 // Insert data into APPOINTMENTS table
 router.post("/appointments", (req, res) => {
   const {
@@ -78,10 +163,63 @@ router.post("/appointments", (req, res) => {
   });
 });
 
+// Add to your existing router
+router.get("/nurse/:nurseId", (req, res) => {
+  // Authentication middleware (you might already have this)
+  const nurseId = req.params.nurseId;
+
+  // Verify the nurse is accessing their own appointments
+  if (req.user.role !== "nurse" || req.user.nurseId !== nurseId) {
+    return res.status(403).json({
+      success: false,
+      message: "Unauthorized access to appointments",
+    });
+  }
+
+  const query = `
+    SELECT 
+      appointment_id,
+      patient_name,
+      patient_contact,
+      appointment_date,
+      appointment_time,
+      gender,
+      age,
+      critical,
+      payment_status,
+      payment_amount,
+      payment_type,
+      appointment_status
+    FROM APPOINTMENTS
+    WHERE nurse_id = ?
+    ORDER BY appointment_date DESC, appointment_time DESC
+  `;
+
+  db.query(query, [nurseId], (err, results) => {
+    if (err) {
+      console.error("Error fetching nurse appointments:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch appointments",
+      });
+    }
+
+    // Format dates to ISO string
+    const formattedResults = results.map((appointment) => ({
+      ...appointment,
+      appointment_date: new Date(appointment.appointment_date).toISOString(),
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: formattedResults,
+    });
+  });
+});
+
 // Update payment status, amount, and payment method
 router.put("/appointments/payment", (req, res) => {
   const { appointment_id, payment_status, amount, payment_method } = req.body;
-
   const query = `UPDATE APPOINTMENTS SET payment_status = ?, payment_amount = ?, payment_type = ? WHERE appointment_id = ?`;
 
   db.query(

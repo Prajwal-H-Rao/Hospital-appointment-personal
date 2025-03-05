@@ -8,7 +8,7 @@ router.get("/appointments/:user_id", (req, res) => {
   console.log("Hello");
   const { user_id } = req.params;
   const query =
-    "SELECT * FROM APPOINTMENTS WHERE doctor_id IN ( SELECT doctor_id from DOCTORS WHERE user_id=?)";
+    "SELECT * FROM APPOINTMENTS WHERE doctor_id IN ( SELECT doctor_id from DOCTORS WHERE user_id=?) AND appointment_status='approved'";
 
   db.query(query, [user_id], (err, results) => {
     if (err) {
@@ -60,6 +60,13 @@ router.delete("/requests/appointment/:appointment_id", (req, res) => {
   const query = `
      DELETE FROM APPOINTMENT_REQUESTS WHERE (name,contact) in (select patient_name,patient_contact from APPOINTMENTS where appointment_id=?)
   `;
+  const updateQuery = `UPDATE APPOINTMENTS
+    SET appointment_status = 'completed'
+    WHERE (patient_name, patient_contact) IN (
+    SELECT patient_name, patient_contact
+    FROM (SELECT * FROM APPOINTMENTS) AS temp
+    WHERE appointment_id = ?
+    )`;
 
   db.query(query, [appointment_id], (err, result) => {
     if (err) {
@@ -68,10 +75,17 @@ router.delete("/requests/appointment/:appointment_id", (req, res) => {
         .status(500)
         .json({ message: "Failed to delete appointment request" });
     }
-
-    res.status(200).json({
-      message: "Appointment request deleted successfully",
-      affectedRows: result.affectedRows,
+    db.query(updateQuery, [appointment_id], (err) => {
+      if (err) {
+        console.error("Error updating appointment request:", err);
+        return res
+          .status(500)
+          .json({ message: "Failed to update appointment status" });
+      }
+      res.status(200).json({
+        message: "Appointment request deleted successfully",
+        affectedRows: result.affectedRows,
+      });
     });
   });
 });
