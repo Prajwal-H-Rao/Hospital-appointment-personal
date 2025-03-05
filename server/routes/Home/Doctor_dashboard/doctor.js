@@ -4,11 +4,13 @@ const db = require("../../../database/db.js");
 const router = express.Router();
 
 // Get all appointments for a doctor
-router.get("/appointments/:doctor_id", (req, res) => {
-  const { doctor_id } = req.params;
-  const query = "SELECT * FROM APPOINTMENTS WHERE doctor_id = ?";
+router.get("/appointments/:user_id", (req, res) => {
+  console.log("Hello");
+  const { user_id } = req.params;
+  const query =
+    "SELECT * FROM APPOINTMENTS WHERE doctor_id IN ( SELECT doctor_id from DOCTORS WHERE user_id=?)";
 
-  db.query(query, [doctor_id], (err, results) => {
+  db.query(query, [user_id], (err, results) => {
     if (err) {
       console.error("Error fetching doctor appointments:", err);
       return res.status(500).json({ message: "Failed to fetch appointments" });

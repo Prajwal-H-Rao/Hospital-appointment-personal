@@ -33,7 +33,14 @@ router.post("/login", (req, res) => {
         SECRET,
         { expiresIn: "1d" }
       );
-      res.status(200).json({ token, email: user.email, role: user.role });
+      res
+        .status(200)
+        .json({
+          token,
+          email: user.email,
+          role: user.role,
+          userId: user.user_id,
+        });
     } else {
       res.status(401).json({ message: "Unauthorized: Incorrect password" });
     }
