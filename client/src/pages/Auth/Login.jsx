@@ -59,7 +59,7 @@ const Login = () => {
           sameSite: "strict",
         });
       } else if (response.data.role === "nurse") {
-        Cookies.set("adminId", response.data.userId, {
+        Cookies.set("nurseId", response.data.userId, {
           expires: 1,
           secure: true,
           sameSite: "strict",
