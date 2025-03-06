@@ -62,6 +62,11 @@ const Login = () => {
           sameSite: "strict",
         });
       } else {
+        Cookies.set("adminId", response.data.userId, {
+          expires: 1,
+          secure: true,
+          sameSite: "strict",
+        });
       }
 
       // Redirect to appropriate dashboard

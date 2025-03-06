@@ -27,6 +27,15 @@ const AdminDashboard = () => {
   const [message, setMessage] = useState({ type: "", content: "" });
 
   useEffect(() => {
+    const token = Cookies.get("authToken");
+    const role = Cookies.get("userRole");
+    const adminId = Cookies.get("adminId");
+    console.log(token, role, adminId);
+
+    if (!token || role !== "admin" || !adminId) {
+      navigate("/login");
+      return;
+    }
     const fetchData = async () => {
       try {
         const [appsRes, docsRes, nursesRes] = await Promise.all([
