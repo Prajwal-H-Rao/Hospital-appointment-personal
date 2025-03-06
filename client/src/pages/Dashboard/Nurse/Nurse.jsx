@@ -22,7 +22,7 @@ const NurseDashboard = () => {
     if (message.content) {
       timer = setTimeout(() => {
         setMessage({ type: "", content: "" });
-      }, 3000); // Message will auto-close after 3 seconds
+      }, 3000);
     }
     return () => {
       if (timer) {
@@ -43,7 +43,6 @@ const NurseDashboard = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch doctors and group by department
         const doctorsRes = await axios.get(
           "https://appointment-backend-x08l.onrender.com/manage/doctors",
           {
@@ -58,13 +57,11 @@ const NurseDashboard = () => {
         }, {});
         setDoctorsByDepartment(groupedDoctors);
 
-        // Fetch pending requests
         const requestsRes = await axios.get(
           "https://appointment-backend-x08l.onrender.com/manage/requests",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // Initialize selections
         setRequests(
           requestsRes.data.map((request) => ({
             ...request,
@@ -73,7 +70,6 @@ const NurseDashboard = () => {
           }))
         );
 
-        // Fetch appointments
         const appsRes = await axios.get(
           `https://appointment-backend-x08l.onrender.com/manage/nurse/${nurseId}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -177,7 +173,6 @@ const NurseDashboard = () => {
         payment_method: "cash",
       });
 
-      // Refresh appointments
       const res = await axios.get(
         `https://appointment-backend-x08l.onrender.com/manage/nurse/${Cookies.get(
           "nurseId"
@@ -195,16 +190,16 @@ const NurseDashboard = () => {
   };
 
   return (
-    <div className="h-screen bg-amber-50 p-8 flex flex-col">
+    <div className="h-screen bg-amber-50 p-4 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-gray-800">Nurse Dashboard</h1>
         <button
           onClick={() => {
             Cookies.remove("authToken");
             navigate("/login");
           }}
-          className="bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-2 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+          className="bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-2 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
         >
           Logout
         </button>
@@ -213,7 +208,7 @@ const NurseDashboard = () => {
       {/* Message Display */}
       {message.content && (
         <div
-          className={`mb-6 absolute p-4 rounded-lg z-10 ${
+          className={`mb-4 p-4 rounded-lg z-10 ${
             message.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
@@ -224,24 +219,24 @@ const NurseDashboard = () => {
       )}
 
       {/* Main Content */}
-      <div className="flex gap-8 flex-1 min-h-0">
+      <div className="flex gap-4 flex-1 min-h-0">
         {/* Pending Requests */}
-        <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex flex-col">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        <div className="flex-1 bg-white rounded-xl shadow-lg p-4 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Pending Requests
           </h2>
           <div className="flex-grow overflow-hidden">
-            <div className="h-full overflow-y-auto">
-              <table className="w-full min-w-[1000px]">
+            <div className="h-[300px] overflow-y-auto">
+              <table className="w-full min-w-[800px]">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b-2 border-amber-100">
-                    <th className="p-3 text-left text-gray-600">Patient</th>
-                    <th className="p-3 text-left text-gray-600">Contact</th>
-                    <th className="p-3 text-left text-gray-600">Department</th>
-                    <th className="p-3 text-left text-gray-600">Date</th>
-                    <th className="p-3 text-left text-gray-600">Doctor</th>
-                    <th className="p-3 text-left text-gray-600">Criticality</th>
-                    <th className="p-3 text-right text-gray-600">Actions</th>
+                    <th className="p-2 text-left text-gray-600">Patient</th>
+                    <th className="p-2 text-left text-gray-600">Contact</th>
+                    <th className="p-2 text-left text-gray-600">Department</th>
+                    <th className="p-2 text-left text-gray-600">Date</th>
+                    <th className="p-2 text-left text-gray-600">Doctor</th>
+                    <th className="p-2 text-left text-gray-600">Criticality</th>
+                    <th className="p-2 text-right text-gray-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -250,19 +245,19 @@ const NurseDashboard = () => {
                       key={request.request_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td className="p-3 text-gray-700">{request.name}</td>
-                      <td className="p-3 text-gray-600">{request.contact}</td>
-                      <td className="p-3 text-gray-600">
+                      <td className="p-2 text-gray-700">{request.name}</td>
+                      <td className="p-2 text-gray-600">{request.contact}</td>
+                      <td className="p-2 text-gray-600">
                         {request.department}
                       </td>
-                      <td className="p-3 text-gray-600">
+                      <td className="p-2 text-gray-600">
                         {new Date(
                           request.appointment_date
                         ).toLocaleDateString()}
                       </td>
-                      <td className="p-3">
+                      <td className="p-2">
                         <select
-                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                          className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                           onChange={(e) =>
                             handleDoctorSelect(
                               request.request_id,
@@ -284,9 +279,9 @@ const NurseDashboard = () => {
                           )}
                         </select>
                       </td>
-                      <td className="p-3">
+                      <td className="p-2">
                         <select
-                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                          className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                           onChange={(e) =>
                             handleCriticalitySelect(
                               request.request_id,
@@ -301,7 +296,7 @@ const NurseDashboard = () => {
                           <option value="high">High</option>
                         </select>
                       </td>
-                      <td className="p-3 text-right">
+                      <td className="p-2 text-right">
                         <button
                           onClick={() => approveRequest(request)}
                           disabled={
@@ -309,7 +304,7 @@ const NurseDashboard = () => {
                             !request.selectedDoctorId ||
                             !request.selectedCriticality
                           }
-                          className="bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-300 disabled:opacity-50"
+                          className="bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-1 rounded-lg hover:shadow-md transition-all duration-300 disabled:opacity-50"
                         >
                           {loading ? "Processing..." : "Approve"}
                         </button>
@@ -323,64 +318,58 @@ const NurseDashboard = () => {
         </div>
 
         {/* Right Column */}
-        <div className="w-96 flex flex-col gap-6">
+        <div className="w-96 flex flex-col gap-4">
           {/* Appointments List */}
-          {/* Appointments List */}
-          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col flex-1">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          <div className="bg-white rounded-xl shadow-lg p-4 flex flex-col flex-1">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Scheduled Appointments
             </h2>
-            <div className="flex-1 overflow-y-scroll h-[300px]">
-              {" "}
-              {/* Fixed height container */}
-              <div className="max-h-[7rem]">
-                <table className="w-full">
-                  <thead className="sticky top-0 bg-white">
-                    <tr className="border-b-2 border-amber-100">
-                      <th className="p-3 text-left text-gray-600">Patient</th>
-                      <th className="p-3 text-left text-gray-600">Date</th>
-                      <th className="p-3 text-left text-gray-600">Status</th>
+            <div className="flex-1 overflow-y-auto h-[300px]">
+              <table className="w-full">
+                <thead className="sticky top-0 bg-white">
+                  <tr className="border-b-2 border-amber-100">
+                    <th className="p-2 text-left text-gray-600">Patient</th>
+                    <th className="p-2 text-left text-gray-600">Date</th>
+                    <th className="p-2 text-left text-gray-600">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appointments.map((appointment) => (
+                    <tr
+                      key={appointment.appointment_id}
+                      className="border-b border-amber-50 hover:bg-amber-50"
+                    >
+                      <td className="p-2 text-gray-700">
+                        {appointment.patient_name}
+                      </td>
+                      <td className="p-2 text-gray-600">
+                        {new Date(
+                          appointment.appointment_date
+                        ).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="p-2">
+                        <span
+                          className={`px-2 py-1 rounded ${
+                            appointment.payment_status === "paid"
+                              ? "bg-green-200 text-green-800"
+                              : "bg-red-200 text-red-800"
+                          }`}
+                        >
+                          {appointment.payment_status}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className=" w-full overflow-y-auto">
-                    {/* Approx height for 2 rows */}
-                    {appointments.map((appointment) => (
-                      <tr
-                        key={appointment.appointment_id}
-                        className="border-b border-amber-50 hover:bg-amber-50"
-                      >
-                        <td className="p-3 text-gray-700">
-                          {appointment.patient_name}
-                        </td>
-                        <td className="p-3 text-gray-600">
-                          {new Date(
-                            appointment.appointment_date
-                          ).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </td>
-                        <td className="p-3">
-                          <span
-                            className={`px-2 py-1 rounded ${
-                              appointment.payment_status === "paid"
-                                ? "bg-green-200 text-green-800"
-                                : "bg-red-200 text-red-800"
-                            }`}
-                          >
-                            {appointment.payment_status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
           {/* Payment Update Form */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-xl shadow-lg p-4">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Update Payment
             </h2>
@@ -395,7 +384,7 @@ const NurseDashboard = () => {
                       appointment_id: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                   required
                 >
                   <option value="">Select Appointment</option>
@@ -419,7 +408,7 @@ const NurseDashboard = () => {
                         payment_status: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                     required
                   >
                     <option value="paid">Paid</option>
@@ -437,7 +426,7 @@ const NurseDashboard = () => {
                         payment_method: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                     required
                   >
                     <option value="cash">Cash</option>
@@ -455,7 +444,7 @@ const NurseDashboard = () => {
                   onChange={(e) =>
                     setPaymentData({ ...paymentData, amount: e.target.value })
                   }
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  className="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                   required
                 />
               </div>
@@ -463,7 +452,7 @@ const NurseDashboard = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-md transition-all duration-300 disabled:opacity-75"
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-md transition-all duration-300 disabled:opacity-75"
               >
                 {loading ? "Updating..." : "Update Payment"}
               </button>
