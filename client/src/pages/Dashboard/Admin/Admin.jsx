@@ -30,6 +30,7 @@ const AdminDashboard = () => {
     const token = Cookies.get("authToken");
     const role = Cookies.get("userRole");
     const adminId = Cookies.get("adminId");
+    console.log(token, role, adminId);
 
     if (!token || role !== "admin" || !adminId) {
       navigate("/login");
@@ -66,6 +67,7 @@ const AdminDashboard = () => {
         `https://appointment-backend-x08l.onrender.com/admin/prescriptions/${appointmentId}`
       );
       setPrescription(response.data);
+      console.log(response.data);
     } catch (error) {
       setMessage({ type: "error", content: "Failed to fetch prescription" });
       setPrescription(null);
@@ -146,7 +148,7 @@ const AdminDashboard = () => {
       )}
 
       {/* Main Content Container */}
-      <div className="flex gap-4 flex-1 min-h-0 flex-wrap">
+      <div className="flex gap-4 flex-1 min-h-0">
         {/* Data Section */}
         <div className="flex-1 flex flex-col gap-6 min-w-0">
           {/* Appointments */}
@@ -181,7 +183,7 @@ const AdminDashboard = () => {
                           fetchPrescription(appointment.appointment_id);
                         }}
                         key={appointment.appointment_id}
-                        className="border-b border-gray-100 hover:bg-amber-50 transition-colors cursor-pointer"
+                        className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
                       >
                         <td className="p-3 text-gray-800">
                           {appointment.patient_name}
@@ -219,7 +221,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Staff Section */}
-          <div className="flex gap-6 flex-1 min-h-0 flex-wrap">
+          <div className="flex gap-6 flex-1 min-h-0">
             {/* Doctors */}
             <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -305,7 +307,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Forms Section */}
-        <div className="w-full md:w-96 flex flex-col gap-4 min-h-0">
+        <div className="w-96 flex flex-col gap-4 min-h-0">
           {/* Create Doctor Form */}
           <div className="bg-white rounded-lg shadow p-4 flex flex-col">
             <h2 className="text-lg font-semibold mb-3">Create Doctor</h2>
@@ -429,9 +431,8 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-
       {selectedAppointment && (
-        <div className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
+        <div className="fixed inset-0  bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-gray-800">
