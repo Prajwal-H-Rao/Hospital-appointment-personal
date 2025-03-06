@@ -168,16 +168,15 @@ const DoctorDashboard = () => {
       </div>
       <div className="h-2" />
       {/* Main Content Container */}
-      <div className=" flex gap-8 h-9/12 ">
+      <div className="flex gap-8 flex-1 min-h-0">
         {/* Appointments Table */}
-        <div className="h-full" />
         <div className="flex-1 bg-white rounded-lg shadow-md p-6 flex flex-col">
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Appointments
           </h2>
-          <div className="flex-1 ">
-            <div className="h-full max-h-[calc(100vh-200px)] overflow-y-auto">
-              <table className="w-full ">
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full overflow-y-auto">
+              <table className="w-full">
                 <thead className="sticky top-0 bg-white z-10">
                   <tr className="border-b-2 border-amber-100">
                     <th className="text-center py-3 px-4">

@@ -18,6 +18,15 @@ const NurseDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (message.content) {
+      setTimeout(() => {
+        setMessage({ type: "", content: "" });
+      });
+      return () => clearTimeout(timer);
+    }
+  }, [message.content]);
+
+  useEffect(() => {
     const token = Cookies.get("authToken");
     const role = Cookies.get("userRole");
     const nurseId = Cookies.get("nurseId");
@@ -178,10 +187,8 @@ const NurseDashboard = () => {
 
   return (
     <div className="h-screen bg-amber-50 p-8 flex flex-col">
-      <div className="h-4" />
       {/* Header */}
       <div className="flex items-center mb-8">
-        <div className="h-full min-w-5" />
         <h1 className="text-3xl font-bold flex-grow">Nurse Dashboard</h1>
         <button
           onClick={() => {
@@ -196,7 +203,6 @@ const NurseDashboard = () => {
       </div>
 
       {/* Message Display */}
-      <div className="h-4" />
       <div className="flex">
         {message.content && (
           <div
@@ -208,15 +214,15 @@ const NurseDashboard = () => {
           </div>
         )}
       </div>
-      <div className="h-2" />
       {/* Main Content */}
-      <div className="flex gap-8 h-9/12">
+      <div className="flex gap-8 flex-1 min-h-0">
         {/* Pending Requests */}
-        <div className="flex-1 bg-white rounded-lg shadow-md p-6 flex flex-col">
+        <div className="flex-1/2 bg-white rounded-lg shadow-md p-6 flex flex-col">
           <h2 className="text-2xl font-semibold mb-6 text-center">
             Pending Requests
           </h2>
           <div className="flex-grow overflow-y-auto">
+            {/* Pending Requests Table */}
             <table className="w-full">
               <thead className="sticky top-0 bg-white">
                 <tr className="border-b-2 border-amber-100">
@@ -224,6 +230,8 @@ const NurseDashboard = () => {
                   <th className="p-3">Contact</th>
                   <th className="p-3">Department</th>
                   <th className="p-3">Date</th>
+                  <th className="p-3">Doctor</th>
+                  <th className="p-3">Criticality</th>
                   <th className="p-3">Actions</th>
                 </tr>
               </thead>
@@ -239,7 +247,9 @@ const NurseDashboard = () => {
                     <td className="p-3 text-center">
                       {new Date(request.appointment_date).toLocaleDateString()}
                     </td>
-                    <td className="p-3 text-center space-y-2">
+
+                    {/* Doctor Selection Column */}
+                    <td className="p-3 text-center">
                       <select
                         className="w-full p-2 border rounded"
                         onChange={(e) =>
@@ -259,7 +269,10 @@ const NurseDashboard = () => {
                           )
                         )}
                       </select>
+                    </td>
 
+                    {/* Criticality Selection Column */}
+                    <td className="p-3 text-center">
                       <select
                         className="w-full p-2 border rounded"
                         onChange={(e) =>
@@ -275,7 +288,10 @@ const NurseDashboard = () => {
                         <option value="mid">Medium</option>
                         <option value="high">High</option>
                       </select>
+                    </td>
 
+                    {/* Approve Button Column */}
+                    <td className="p-3 text-center">
                       <button
                         onClick={() => approveRequest(request)}
                         disabled={
@@ -296,13 +312,13 @@ const NurseDashboard = () => {
         </div>
 
         {/* Appointments & Payment */}
-        <div className="flex-1 flex flex-col gap-8">
+        <div className="flex-1/3 flex flex-col min-h-0 gap-6">
           {/* Appointments List */}
-          <div className="bg-white rounded-lg shadow-md p-6 flex-grow">
+          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col flex-1 min-h-0">
             <h2 className="text-2xl font-semibold mb-6 text-center">
               Scheduled Appointments
             </h2>
-            <div className="overflow-y-auto h-[300px]">
+            <div className="overflow-y-auto flex-1">
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b-2 border-amber-100">
@@ -346,16 +362,16 @@ const NurseDashboard = () => {
               </table>
             </div>
           </div>
-
           {/* Payment Update Form */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
+          {/* Payment Update Form */}
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h2 className="text-2xl font-semibold mb-4 text-center">
               Update Payment
             </h2>
-            <form onSubmit={handlePaymentUpdate} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2">Appointment</label>
+            <form onSubmit={handlePaymentUpdate} className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm">
+                <div className="space-y-1">
+                  <label className="block text-sm">Appointment</label>
                   <select
                     value={paymentData.appointment_id}
                     onChange={(e) =>
@@ -364,7 +380,7 @@ const NurseDashboard = () => {
                         appointment_id: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded"
+                    className="w-full p-1 text-sm border rounded"
                     required
                   >
                     <option value="">Select Appointment</option>
@@ -373,15 +389,15 @@ const NurseDashboard = () => {
                         key={app.appointment_id}
                         value={app.appointment_id}
                       >
-                        {app.patient_name} -{" "}
+                        {app.patient_name} -
                         {new Date(app.appointment_date).toLocaleDateString()}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div>
-                  <label className="block mb-2">Status</label>
+                <div className="space-y-1">
+                  <label className="block text-sm">Status</label>
                   <select
                     value={paymentData.payment_status}
                     onChange={(e) =>
@@ -390,7 +406,7 @@ const NurseDashboard = () => {
                         payment_status: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded"
+                    className="w-full p-1 text-sm border rounded"
                     required
                   >
                     <option value="paid">Paid</option>
@@ -398,8 +414,8 @@ const NurseDashboard = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block mb-2">Amount</label>
+                <div className="space-y-1">
+                  <label className="block text-sm">Amount</label>
                   <input
                     type="number"
                     step="0.01"
@@ -407,13 +423,13 @@ const NurseDashboard = () => {
                     onChange={(e) =>
                       setPaymentData({ ...paymentData, amount: e.target.value })
                     }
-                    className="w-full p-2 border rounded"
+                    className="w-full p-1 text-sm border rounded"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block mb-2">Method</label>
+                <div className="space-y-1">
+                  <label className="block text-sm">Method</label>
                   <select
                     value={paymentData.payment_method}
                     onChange={(e) =>
@@ -422,7 +438,7 @@ const NurseDashboard = () => {
                         payment_method: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded"
+                    className="w-full p-1 text-sm border rounded"
                     required
                   >
                     <option value="cash">Cash</option>
@@ -434,7 +450,7 @@ const NurseDashboard = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-amber-300 to-amber-400 h-12 rounded-lg text-white font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-amber-300 to-amber-400 h-8 rounded text-white text-sm font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50"
               >
                 {loading ? "Updating..." : "Update Payment"}
               </button>

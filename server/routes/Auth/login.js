@@ -7,7 +7,7 @@ const SECRET = process.env.JWT_SECRET;
 
 router.post("/login", (req, res) => {
   console.log(req.body);
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
   const query = "SELECT * FROM USERS WHERE email = ?";
 
   db.query(query, [email], (err, results) => {
@@ -33,14 +33,12 @@ router.post("/login", (req, res) => {
         SECRET,
         { expiresIn: "1d" }
       );
-      res
-        .status(200)
-        .json({
-          token,
-          email: user.email,
-          role: user.role,
-          userId: user.user_id,
-        });
+      res.status(200).json({
+        token,
+        email: user.email,
+        role: user.role,
+        userId: user.user_id,
+      });
     } else {
       res.status(401).json({ message: "Unauthorized: Incorrect password" });
     }

@@ -7,7 +7,6 @@ import Navbar from "../../components/Navbar/Navbar";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("doctor");
   const [message, setMessage] = useState({ type: "", content: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ const Login = () => {
       const response = await axios.post("http://localhost:3000/login", {
         email,
         password,
-        role,
       });
 
       // Store authentication data
@@ -30,20 +28,20 @@ const Login = () => {
         sameSite: "strict",
       });
 
-      Cookies.set("userRole", role, {
+      Cookies.set("userRole", response.data.role, {
         expires: 1,
         secure: true,
         sameSite: "strict",
       });
 
       // Store role-specific ID
-      if (role === "doctor") {
+      if (response.data.role === "doctor") {
         Cookies.set("doctorId", response.data.userId, {
           expires: 1,
           secure: true,
           sameSite: "strict",
         });
-      } else if (role === "nurse") {
+      } else if (response.data.role === "nurse") {
         Cookies.set("nurseId", response.data.userId, {
           expires: 1,
           secure: true,
@@ -51,8 +49,8 @@ const Login = () => {
         });
       }
 
-      // Redirect with state for additional security
-      navigate(`/${role}-dashboard`, {
+      // Redirect to appropriate dashboard
+      navigate(`/${response.data.role}-dashboard`, {
         state: { freshLogin: true },
         replace: true,
       });
@@ -77,7 +75,7 @@ const Login = () => {
     <>
       <Navbar />
       <div className="flex justify-center items-center h-[91.4vh] w-full bg-amber-50">
-        <div className="p-8 h-1/2 rounded-lg w-1/2 max-w-md">
+        <div className="p-8 rounded-lg w-full max-w-md">
           <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
           {message.content && (
             <div
@@ -105,7 +103,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 h-[2.5rem] text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                   required
                   autoComplete="username"
                 />
@@ -124,41 +122,18 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-lg px-4 py-4 h-[2.5rem] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                   required
                   autoComplete="current-password"
                 />
               </div>
-
-              {/* Role Selection */}
-              <div>
-                <label
-                  htmlFor="role"
-                  className="block text-gray-700 font-medium mb-2"
-                >
-                  Role
-                </label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-3 h-[2rem] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  required
-                >
-                  <option value="doctor">Doctor</option>
-                  <option value="nurse">Nurse</option>
-                </select>
-              </div>
             </div>
 
-            <div className="h-6" />
-
-            {/* Submit Button */}
-            <div className="flex justify-center h-[2.5rem]">
+            <div className="mt-8">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-amber-300 to-amber-400 w-full py-3 rounded-full text-white text-lg font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-amber-300 to-amber-400 w-full py-2 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Logging in..." : "Login"}
               </button>
