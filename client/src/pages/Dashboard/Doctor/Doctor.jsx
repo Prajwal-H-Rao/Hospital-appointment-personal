@@ -132,46 +132,38 @@ const DoctorDashboard = () => {
 
   return (
     <div className="h-screen bg-amber-50 p-8 flex flex-col">
-      <div className="h-4" />
       {/* Header Section */}
-      <div className="flex items-center  mb-8">
-        <div className="h-full min-w-5" />
-        <h1 className="text-3xl font-bold flex-9/12">Doctor Dashboard</h1>
-        <div>
-          <button
-            onClick={() => {
-              Cookies.remove("authToken");
-              navigate("/login");
-            }}
-            className="bg-gradient-to-r from-amber-300 to-amber-400 w-28 h-10 flex items-center justify-center text-center rounded-full text-white font-semibold shadow-md hover:shadow-lg transform hover:cursor-pointer hover:scale-105 transition-all duration-300"
-          >
-            Logout
-          </button>
-        </div>
-        <div className="h-full min-w-5" />
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Doctor Dashboard</h1>
+        <button
+          onClick={() => {
+            Cookies.remove("authToken");
+            navigate("/login");
+          }}
+          className="bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-2 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+        >
+          Logout
+        </button>
       </div>
 
-      <div className="h-4" />
-      <div className="flex">
-        {message.content && (
-          <>
-            <div className="h-full min-w-8 " />
-            <div
-              className={`mb-6 p-4 flex-11/12 rounded-lg ${
-                message.type === "success" ? " text-green-800" : " text-red-800"
-              }`}
-            >
-              {message.content}
-            </div>
-          </>
-        )}
-      </div>
-      <div className="h-2" />
+      {/* Message Display */}
+      {message.content && (
+        <div
+          className={`mb-6 p-4 rounded-lg ${
+            message.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message.content}
+        </div>
+      )}
+
       {/* Main Content Container */}
       <div className="flex gap-8 flex-1 min-h-0">
         {/* Appointments Table */}
-        <div className="flex-1 bg-white rounded-lg shadow-md p-6 flex flex-col">
-          <h2 className="text-2xl font-semibold mb-6 text-center">
+        <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Appointments
           </h2>
           <div className="flex-1 overflow-hidden">
@@ -179,12 +171,10 @@ const DoctorDashboard = () => {
               <table className="w-full">
                 <thead className="sticky top-0 bg-white z-10">
                   <tr className="border-b-2 border-amber-100">
-                    <th className="text-center py-3 px-4">
-                      <span className="w-1"></span>Patient
-                    </th>
-                    <th className="text-center py-3 px-4">Date</th>
-                    <th className="text-center py-3 px-4">Time</th>
-                    <th className="text-center py-3 px-4">Actions</th>
+                    <th className="p-3 text-left text-gray-600">Patient</th>
+                    <th className="p-3 text-left text-gray-600">Date</th>
+                    <th className="p-3 text-left text-gray-600">Time</th>
+                    <th className="p-3 text-right text-gray-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,25 +183,38 @@ const DoctorDashboard = () => {
                       key={appointment.appointment_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td className="py-3 px-4 text-center">
+                      <td className="p-3 text-gray-700">
                         {appointment.patient_name}
                       </td>
-                      <td className="py-3 px-4 text-center">
+                      <td className="p-3 text-gray-600">
                         {new Date(
                           appointment.appointment_date
                         ).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4 text-center">
+                      <td className="p-3 text-gray-600">
                         {appointment.appointment_time}
                       </td>
-                      <td className="py-3 px-4 text-center">
+                      <td className="p-3 text-right">
                         <button
                           onClick={() =>
                             handleDeleteAppointment(appointment.appointment_id)
                           }
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-500 hover:text-red-700 transition-colors"
                         >
-                          Delete
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
                         </button>
                       </td>
                     </tr>
@@ -223,117 +226,128 @@ const DoctorDashboard = () => {
         </div>
 
         {/* Prescription Form */}
-        <div className="flex-1 bg-white rounded-lg shadow-md p-6 flex flex-col">
-          <h2 className="text-2xl font-semibold mb-6 text-center">
+        <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Add Prescription
           </h2>
           <form
             onSubmit={handlePrescriptionSubmit}
             className="flex flex-col flex-1 overflow-hidden"
           >
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">
-                <div className="inline-block w-[1rem]"></div>Select Appointment
+            {/* Appointment Selection */}
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Select Appointment
               </label>
-              <div>
-                <div className="inline-block w-4"></div>
-                <select
-                  value={prescription.appointment_id}
-                  onChange={(e) =>
-                    setPrescription({
-                      ...prescription,
-                      appointment_id: e.target.value,
-                    })
-                  }
-                  className="w-4/5 h-[2.5rem] p-2 border rounded-md "
-                  required
-                >
-                  <option value="">Select an appointment</option>
-                  {appointments.map((appointment) => (
-                    <option
-                      key={appointment.appointment_id}
-                      value={appointment.appointment_id}
-                    >
-                      {appointment.patient_name} -{" "}
-                      {new Date(
-                        appointment.appointment_date
-                      ).toLocaleDateString()}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={prescription.appointment_id}
+                onChange={(e) =>
+                  setPrescription({
+                    ...prescription,
+                    appointment_id: e.target.value,
+                  })
+                }
+                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                required
+              >
+                <option value="">Choose an appointment...</option>
+                {appointments.map((appointment) => (
+                  <option
+                    key={appointment.appointment_id}
+                    value={appointment.appointment_id}
+                  >
+                    {appointment.patient_name} -{" "}
+                    {new Date(
+                      appointment.appointment_date
+                    ).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="flex-1 overflow-hidden">
-              <div className="h-full max-h-[calc(100vh-300px)] overflow-y-auto">
-                <table className="w-full  min-h-fu">
-                  <thead className="sticky top-0 bg-white z-10">
-                    <tr className="">
-                      <th className="text-center py-3 px-4">Medicine</th>
-                      <th className="text-center py-3 px-4">Dosage</th>
-                      <th className="text-center py-3 px-4">Dosage</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {prescription.medicines.map((medicine, index) => (
-                      <tr key={index} className="border-b border-amber-50">
-                        <td className="py-2 px-4">
-                          <div className="h-full inline-block w-4" />
+            {/* Medicines List */}
+            <div className="flex-1 overflow-hidden mb-6">
+              <div className="h-full max-h-[400px] overflow-y-auto">
+                <div className="space-y-4">
+                  {prescription.medicines.map((medicine, index) => (
+                    <div
+                      key={index}
+                      className="bg-amber-50 rounded-lg p-4 flex gap-4 items-center"
+                    >
+                      <div className="flex-1 grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            Medicine Name
+                          </label>
                           <input
                             type="text"
                             name="medicine_name"
-                            placeholder="Medicine name"
+                            placeholder="Enter medicine name"
                             value={medicine.medicine_name}
                             onChange={(e) => handlePrescriptionChange(index, e)}
-                            className="w-10/12 p-2 border-b focus:outline-none"
+                            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                             required
                           />
-                        </td>
-                        <td className="py-2 px-4">
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            Dosage Instructions
+                          </label>
                           <input
                             type="text"
                             name="medicine_dosage"
-                            placeholder="Dosage"
+                            placeholder="Enter dosage details"
                             value={medicine.medicine_dosage}
                             onChange={(e) => handlePrescriptionChange(index, e)}
-                            className="w-10/12 p-2 border-b focus:outline-none"
+                            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                             required
                           />
-                        </td>
-                        <td className="py-2 px-4 text-center">
-                          <button
-                            onClick={() => {
-                              const newMedicines =
-                                prescription.medicines.filter(
-                                  (_, i) => i !== index
-                                );
-                              setPrescription({
-                                ...prescription,
-                                medicines: newMedicines,
-                              });
-                            }}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newMedicines = prescription.medicines.filter(
+                            (_, i) => i !== index
+                          );
+                          setPrescription({
+                            ...prescription,
+                            medicines: newMedicines,
+                          });
+                        }}
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center">
-              <div className="h-full w-[1rem]" />
+            {/* Form Actions */}
+            <div className="flex justify-between items-center">
               <button
                 type="button"
                 onClick={addMedicineField}
-                className="text-amber-600 flex-1 hover:text-amber-800 flex items-center"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:shadow-md transition-all duration-300 flex items-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-1"
+                  className="h-5 w-5 mr-2"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -346,20 +360,42 @@ const DoctorDashboard = () => {
                 Add Medicine
               </button>
 
-              <div className="h-[3rem]">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-gradient-to-r from-amber-300 flex-1 to-amber-400 w-36 h-10 flex items-center justify-center text-center rounded-full text-white text-sm font-semibold shadow-md hover:shadow-lg transform hover:cursor-pointer hover:scale-105 transition-all duration-300"
-                >
-                  {loading ? "Submitting..." : "Save Prescription"}
-                </button>
-              </div>
-              <div className="h-full w-[1rem]" />
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-gradient-to-r from-green-400 to-green-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-md transition-all duration-300 disabled:opacity-75"
+              >
+                {loading ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  "Save Prescription"
+                )}
+              </button>
             </div>
           </form>
         </div>
-        <div className="h-full" />
       </div>
     </div>
   );
