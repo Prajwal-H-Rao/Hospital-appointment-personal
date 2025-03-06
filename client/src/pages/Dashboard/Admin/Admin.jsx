@@ -8,6 +8,9 @@ const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [nurses, setNurses] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [prescription, setPrescription] = useState(null);
+  const [loadingPrescription, setLoadingPrescription] = useState(false);
   const [newDoctor, setNewDoctor] = useState({
     name: "",
     department: "",
@@ -22,20 +25,6 @@ const AdminDashboard = () => {
     password: "",
   });
   const [message, setMessage] = useState({ type: "", content: "" });
-
-  useEffect(() => {
-    let timer;
-    if (message.content) {
-      timer = setTimeout(() => {
-        setMessage({ type: "", content: "" });
-      }, 3000); // Message will auto-close after 3 seconds
-    }
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [message.content]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +44,22 @@ const AdminDashboard = () => {
 
     fetchData();
   }, []);
+
+  const fetchPrescription = async (appointmentId) => {
+    try {
+      setLoadingPrescription(true);
+      const response = await axios.get(
+        `http://localhost:3000/admin/prescriptions/${appointmentId}`
+      );
+      setPrescription(response.data);
+      console.log(response.data);
+    } catch (error) {
+      setMessage({ type: "error", content: "Failed to fetch prescription" });
+      setPrescription(null);
+    } finally {
+      setLoadingPrescription(false);
+    }
+  };
 
   const handleCreateDoctor = async (e) => {
     e.preventDefault();
@@ -107,7 +112,7 @@ const AdminDashboard = () => {
       {/* Message Display */}
       {message.content && (
         <div
-          className={`mb-6 absolute p-4 rounded-lg z-10 ${
+          className={`mb-4 p-3 rounded-lg text-sm ${
             message.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
@@ -120,78 +125,67 @@ const AdminDashboard = () => {
       {/* Main Content Container */}
       <div className="flex gap-4 flex-1 min-h-0">
         {/* Data Section */}
-        <div className="flex-1 flex flex-col gap-4 min-w-0">
+        <div className="flex-1 flex flex-col gap-6 min-w-0">
           {/* Appointments */}
-          <div className="bg-white rounded-lg shadow p-4 flex-1 flex flex-col">
-            <h2 className="text-lg font-semibold mb-3">Appointments</h2>
-            <div className="flex-1 overflow-auto">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-white">
-                  <tr className="border-b-2 border-amber-100">
-                    <th className="p-1 text-left">Patient</th>
-                    <th className="p-1">Date</th>
-                    <th className="p-1">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map((appointment) => (
-                    <tr
-                      key={appointment.appointment_id}
-                      className="border-b border-amber-50 hover:bg-amber-50"
-                    >
-                      <td className="p-1">{appointment.patient_name}</td>
-                      <td className="p-1 text-center">
-                        {new Date(
-                          appointment.appointment_date
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-                      <td className="p-1 text-center">
-                        <span
-                          className={`px-1 rounded ${
-                            appointment.payment_status === "paid"
-                              ? "bg-green-200 text-green-800"
-                              : "bg-red-200 text-red-800"
-                          }`}
-                        >
-                          {appointment.payment_status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Staff Lists */}
-          <div className="flex gap-4 flex-1 min-h-0">
-            {/* Doctors */}
-            <div className="bg-white rounded-lg shadow p-4 flex-1 flex flex-col">
-              <h2 className="text-lg font-semibold mb-3">Doctors</h2>
-              <div className="flex-1 overflow-auto">
-                <table className="w-full text-sm">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Appointments
+            </h2>
+            <div className="flex-1 overflow-hidden">
+              <div className="h-[300px] overflow-y-auto">
+                <table className="w-full">
                   <thead className="sticky top-0 bg-white">
-                    <tr className="border-b-2 border-amber-100">
-                      <th className="p-1 text-left">Name</th>
-                      <th className="p-1">Department</th>
-                      <th className="p-1">Contact</th>
+                    <tr className="border-b border-gray-200">
+                      <th className="p-3 text-left text-gray-600 font-medium">
+                        Patient
+                      </th>
+                      <th className="p-3 text-left text-gray-600 font-medium">
+                        Doctor
+                      </th>
+                      <th className="p-3 text-left text-gray-600 font-medium">
+                        Date
+                      </th>
+                      <th className="p-3 text-left text-gray-600 font-medium">
+                        Status
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {doctors.map((doctor) => (
+                    {appointments.map((appointment) => (
                       <tr
-                        key={doctor.doctor_id}
-                        className="border-b border-amber-50 hover:bg-amber-50"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          fetchPrescription(appointment.appointment_id);
+                        }}
+                        key={appointment.appointment_id}
+                        className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
                       >
-                        <td className="p-1">{doctor.doctor_name}</td>
-                        <td className="p-1 text-center">
-                          {doctor.doctor_specialization}
+                        <td className="p-3 text-gray-800">
+                          {appointment.patient_name}
                         </td>
-                        <td className="p-1 text-center">
-                          {doctor.doctor_contact}
+                        <td className="p-3 text-gray-800">
+                          {doctors.find(
+                            (d) => d.doctor_id === appointment.doctor_id
+                          )?.doctor_name || "N/A"}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {new Date(
+                            appointment.appointment_date
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              appointment.payment_status === "paid"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {appointment.payment_status}
+                          </span>
                         </td>
                       </tr>
                     ))}
@@ -199,32 +193,89 @@ const AdminDashboard = () => {
                 </table>
               </div>
             </div>
+          </div>
+
+          {/* Staff Section */}
+          <div className="flex gap-6 flex-1 min-h-0">
+            {/* Doctors */}
+            <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Doctors
+              </h2>
+              <div className="flex-1 overflow-y-scroll">
+                <div className="h-[300px] overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-white">
+                      <tr className="border-b border-gray-200">
+                        <th className="p-3 text-left text-gray-600 font-medium">
+                          Name
+                        </th>
+                        <th className="p-3 text-left text-gray-600 font-medium">
+                          Department
+                        </th>
+                        <th className="p-3 text-left text-gray-600 font-medium">
+                          Contact
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {doctors.map((doctor) => (
+                        <tr
+                          key={doctor.doctor_id}
+                          className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
+                        >
+                          <td className="p-3 text-gray-800">
+                            {doctor.doctor_name}
+                          </td>
+                          <td className="p-3 text-gray-600">
+                            {doctor.doctor_specialization}
+                          </td>
+                          <td className="p-3 text-gray-600">
+                            {doctor.doctor_contact}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
 
             {/* Nurses */}
-            <div className="bg-white rounded-lg shadow p-4 flex-1 flex flex-col">
-              <h2 className="text-lg font-semibold mb-3">Nurses</h2>
-              <div className="flex-1 overflow-auto">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-white">
-                    <tr className="border-b-2 border-amber-100">
-                      <th className="p-1 text-left">Name</th>
-                      <th className="p-1">Contact</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {nurses.map((nurse) => (
-                      <tr
-                        key={nurse.nurse_id}
-                        className="border-b border-amber-50 hover:bg-amber-50"
-                      >
-                        <td className="p-1">{nurse.nurse_name}</td>
-                        <td className="p-1 text-center">
-                          {nurse.nurse_contact}
-                        </td>
+            <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Nurses
+              </h2>
+              <div className="flex-1 overflow-y-scroll">
+                <div className="h-[300px] overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-white">
+                      <tr className="border-b border-gray-200">
+                        <th className="p-3 text-left text-gray-600 font-medium">
+                          Name
+                        </th>
+                        <th className="p-3 text-left text-gray-600 font-medium">
+                          Contact
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {nurses.map((nurse) => (
+                        <tr
+                          key={nurse.nurse_id}
+                          className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
+                        >
+                          <td className="p-3 text-gray-800">
+                            {nurse.nurse_name}
+                          </td>
+                          <td className="p-3 text-gray-600">
+                            {nurse.nurse_contact}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -355,6 +406,144 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+      {selectedAppointment && (
+        <div className="fixed inset-0  bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-800">
+                Prescription Details
+              </h3>
+              <button
+                onClick={() => {
+                  setSelectedAppointment(null);
+                  setPrescription(null);
+                }}
+                className="text-amber-600 hover:text-amber-700 transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {loadingPrescription ? (
+              <div className="text-center py-8 flex items-center justify-center space-x-2 text-gray-600">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
+                <span>Loading prescription...</span>
+              </div>
+            ) : prescription ? (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-500">
+                      Patient
+                    </label>
+                    <p className="text-gray-800 font-medium">
+                      {selectedAppointment.patient_name}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-500">
+                      Doctor
+                    </label>
+                    <p className="text-gray-800 font-medium">
+                      {doctors.find(
+                        (d) => d.doctor_id === selectedAppointment.doctor_id
+                      )?.doctor_name || "N/A"}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-500">
+                      Date
+                    </label>
+                    <p className="text-gray-800">
+                      {new Date(
+                        selectedAppointment.appointment_date
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 pt-6">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                    Medications
+                  </h4>
+                  {prescription?.length > 0 ? (
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full">
+                        <thead className="bg-amber-50">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-medium text-amber-800">
+                              Medicine
+                            </th>
+                            <th className="px-4 py-3 text-left text-sm font-medium text-amber-800">
+                              Dosage
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {prescription.map((medicine, index) => (
+                            <tr
+                              key={index}
+                              className="hover:bg-amber-50 transition-colors"
+                            >
+                              <td className="px-4 py-3 text-gray-800 font-medium">
+                                {medicine.medicine_name}
+                              </td>
+                              <td className="px-4 py-3 text-gray-600">
+                                {medicine.medicine_dosage}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 bg-amber-50 rounded-lg">
+                      <p className="text-gray-500">No medications prescribed</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-red-500 mb-2">
+                  <svg
+                    className="w-12 h-12 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-gray-600 font-medium">
+                  No prescription found for this appointment
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

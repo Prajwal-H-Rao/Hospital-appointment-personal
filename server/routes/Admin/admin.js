@@ -59,20 +59,18 @@ router.get("/appointments", (req, res) => {
   });
 });
 // Get prescriptions by appointment ID
-// router.get("/prescriptions/:appointmentId", (req, res) => {
-//   const { appointmentId } = req.params;
-//   const query = `
-//     SELECT p.prescription_id, p.medicine_name, p.medicine_dosage, d.doctor_name
-//     FROM PRESCRIPTIONS p
-//     LEFT JOIN DOCTORS d ON p.doctor_id = d.doctor_id
-//     WHERE p.appointment_id = ?
-//   `;
-//   db.query(query, [appointmentId], (error, results) => {
-//     if (error)
-//       return res.status(500).json({ message: "Error fetching prescriptions" });
-//     res.json(results);
-//   });
-// });
+router.get("/prescriptions/:appointmentId", (req, res) => {
+  const { appointmentId } = req.params;
+  const query = `
+    SELECT p.prescription_id, p.medicine_name, p.medicine_dosage, d.doctor_name
+    FROM PRESCRIPTIONS p,DOCTORS d,APPOINTMENTS a WHERE p.appointment_id = a.appointment_id AND p.doctor_id = d.doctor_id AND a.appointment_id=?
+  `;
+  db.query(query, [appointmentId], (error, results) => {
+    if (error)
+      return res.status(500).json({ message: "Error fetching prescriptions" });
+    res.json(results);
+  });
+});
 
 // Create new doctor
 router.post("/doctors", (req, res) => {
