@@ -227,7 +227,7 @@ const AdminDashboard = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Doctors
               </h2>
-              <div className="flex-1 overflow-y-scroll">
+              <div className="flex-1">
                 <div className="h-[300px] overflow-y-auto">
                   <table className="w-full">
                     <thead className="sticky top-0 bg-white">
