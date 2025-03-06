@@ -30,7 +30,6 @@ const AdminDashboard = () => {
     const token = Cookies.get("authToken");
     const role = Cookies.get("userRole");
     const adminId = Cookies.get("adminId");
-    console.log(token, role, adminId);
 
     if (!token || role !== "admin" || !adminId) {
       navigate("/login");
@@ -67,7 +66,6 @@ const AdminDashboard = () => {
         `https://appointment-backend-x08l.onrender.com/admin/prescriptions/${appointmentId}`
       );
       setPrescription(response.data);
-      console.log(response.data);
     } catch (error) {
       setMessage({ type: "error", content: "Failed to fetch prescription" });
       setPrescription(null);
@@ -119,9 +117,9 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="h-screen bg-amber-50 p-6 flex flex-col">
+    <div className="h-screen bg-amber-50 p-4 flex flex-col">
       {/* Header Section */}
-      <div className="flex items-center mb-6">
+      <div className="flex items-center mb-4">
         <h1 className="text-2xl font-bold flex-grow">Admin Dashboard</h1>
         <button
           onClick={() => {
@@ -150,27 +148,27 @@ const AdminDashboard = () => {
       {/* Main Content Container */}
       <div className="flex gap-4 flex-1 min-h-0">
         {/* Data Section */}
-        <div className="flex-1 flex flex-col gap-6 min-w-0">
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
           {/* Appointments */}
-          <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex-1 flex flex-col">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Appointments
             </h2>
             <div className="flex-1 overflow-hidden">
-              <div className="h-[300px] overflow-y-auto">
+              <div className="h-[200px] overflow-y-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 bg-white">
                     <tr className="border-b border-gray-200">
-                      <th className="p-3 text-left text-gray-600 font-medium">
+                      <th className="p-2 text-left text-gray-600 font-medium">
                         Patient
                       </th>
-                      <th className="p-3 text-left text-gray-600 font-medium">
+                      <th className="p-2 text-left text-gray-600 font-medium">
                         Doctor
                       </th>
-                      <th className="p-3 text-left text-gray-600 font-medium">
+                      <th className="p-2 text-left text-gray-600 font-medium">
                         Date
                       </th>
-                      <th className="p-3 text-left text-gray-600 font-medium">
+                      <th className="p-2 text-left text-gray-600 font-medium">
                         Status
                       </th>
                     </tr>
@@ -185,15 +183,15 @@ const AdminDashboard = () => {
                         key={appointment.appointment_id}
                         className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
                       >
-                        <td className="p-3 text-gray-800">
+                        <td className="p-2 text-gray-800">
                           {appointment.patient_name}
                         </td>
-                        <td className="p-3 text-gray-800">
+                        <td className="p-2 text-gray-800">
                           {doctors.find(
                             (d) => d.doctor_id === appointment.doctor_id
                           )?.doctor_name || "N/A"}
                         </td>
-                        <td className="p-3 text-gray-600">
+                        <td className="p-2 text-gray-600">
                           {new Date(
                             appointment.appointment_date
                           ).toLocaleDateString("en-US", {
@@ -201,9 +199,9 @@ const AdminDashboard = () => {
                             day: "numeric",
                           })}
                         </td>
-                        <td className="p-3">
+                        <td className="p-2">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            className={`px-2 py-1 rounded-full text-sm font-medium ${
                               appointment.payment_status === "paid"
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
@@ -221,24 +219,24 @@ const AdminDashboard = () => {
           </div>
 
           {/* Staff Section */}
-          <div className="flex gap-6 flex-1 min-h-0">
+          <div className="flex gap-4 flex-1 min-h-0">
             {/* Doctors */}
-            <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 flex-1 flex flex-col">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Doctors
               </h2>
               <div className="flex-1 overflow-y-scroll">
-                <div className="h-[300px]">
+                <div className="h-[200px]">
                   <table className="w-full">
                     <thead className="sticky top-0 bg-white">
                       <tr className="border-b border-gray-200">
-                        <th className="p-3 text-left text-gray-600 font-medium">
+                        <th className="p-2 text-left text-gray-600 font-medium">
                           Name
                         </th>
-                        <th className="p-3 text-left text-gray-600 font-medium">
+                        <th className="p-2 text-left text-gray-600 font-medium">
                           Department
                         </th>
-                        <th className="p-3 text-left text-gray-600 font-medium">
+                        <th className="p-2 text-left text-gray-600 font-medium">
                           Contact
                         </th>
                       </tr>
@@ -249,13 +247,13 @@ const AdminDashboard = () => {
                           key={doctor.doctor_id}
                           className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
                         >
-                          <td className="p-3 text-gray-800">
+                          <td className="p-2 text-gray-800">
                             {doctor.doctor_name}
                           </td>
-                          <td className="p-3 text-gray-600">
+                          <td className="p-2 text-gray-600">
                             {doctor.doctor_specialization}
                           </td>
-                          <td className="p-3 text-gray-600">
+                          <td className="p-2 text-gray-600">
                             {doctor.doctor_contact}
                           </td>
                         </tr>
@@ -267,19 +265,19 @@ const AdminDashboard = () => {
             </div>
 
             {/* Nurses */}
-            <div className="bg-white rounded-xl shadow-sm p-6 flex-1 flex flex-col">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 flex-1 flex flex-col">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Nurses
               </h2>
               <div className="flex-1 overflow-y-scroll">
-                <div className="h-[300px] overflow-y-auto">
+                <div className="h-[200px] overflow-y-auto">
                   <table className="w-full">
                     <thead className="sticky top-0 bg-white">
                       <tr className="border-b border-gray-200">
-                        <th className="p-3 text-left text-gray-600 font-medium">
+                        <th className="p-2 text-left text-gray-600 font-medium">
                           Name
                         </th>
-                        <th className="p-3 text-left text-gray-600 font-medium">
+                        <th className="p-2 text-left text-gray-600 font-medium">
                           Contact
                         </th>
                       </tr>
@@ -290,10 +288,10 @@ const AdminDashboard = () => {
                           key={nurse.nurse_id}
                           className="border-b border-gray-100 hover:bg-amber-50 transition-colors"
                         >
-                          <td className="p-3 text-gray-800">
+                          <td className="p-2 text-gray-800">
                             {nurse.nurse_name}
                           </td>
-                          <td className="p-3 text-gray-600">
+                          <td className="p-2 text-gray-600">
                             {nurse.nurse_contact}
                           </td>
                         </tr>
@@ -307,64 +305,62 @@ const AdminDashboard = () => {
         </div>
 
         {/* Forms Section */}
-        <div className="w-96 flex flex-col gap-4 min-h-0">
+        <div className="w-80 flex flex-col gap-4 min-h-0">
           {/* Create Doctor Form */}
-          <div className="bg-white rounded-lg shadow p-4 flex flex-col">
-            <h2 className="text-lg font-semibold mb-3">Create Doctor</h2>
-            <form onSubmit={handleCreateDoctor} className="space-y-3">
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newDoctor.name}
-                  onChange={(e) =>
-                    setNewDoctor({ ...newDoctor, name: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Department"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newDoctor.department}
-                  onChange={(e) =>
-                    setNewDoctor({ ...newDoctor, department: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newDoctor.email}
-                  onChange={(e) =>
-                    setNewDoctor({ ...newDoctor, email: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newDoctor.password}
-                  onChange={(e) =>
-                    setNewDoctor({ ...newDoctor, password: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Contact Number"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newDoctor.contact}
-                  onChange={(e) =>
-                    setNewDoctor({ ...newDoctor, contact: e.target.value })
-                  }
-                  required
-                  pattern="[0-9]{10}"
-                />
-              </div>
+          <div className="bg-white rounded-lg shadow p-3 flex flex-col max-h-[400px] overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-1">Create Doctor</h2>
+            <form onSubmit={handleCreateDoctor} className="space-y-2">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newDoctor.name}
+                onChange={(e) =>
+                  setNewDoctor({ ...newDoctor, name: e.target.value })
+                }
+                required
+              />
+              <input
+                type="text"
+                placeholder="Department"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newDoctor.department}
+                onChange={(e) =>
+                  setNewDoctor({ ...newDoctor, department: e.target.value })
+                }
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newDoctor.email}
+                onChange={(e) =>
+                  setNewDoctor({ ...newDoctor, email: e.target.value })
+                }
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newDoctor.password}
+                onChange={(e) =>
+                  setNewDoctor({ ...newDoctor, password: e.target.value })
+                }
+                required
+              />
+              <input
+                type="text"
+                placeholder="Contact Number"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newDoctor.contact}
+                onChange={(e) =>
+                  setNewDoctor({ ...newDoctor, contact: e.target.value })
+                }
+                required
+                pattern="[0-9]{10}"
+              />
               <button
                 type="submit"
                 className="w-full bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-amber-600"
@@ -375,52 +371,50 @@ const AdminDashboard = () => {
           </div>
 
           {/* Create Nurse Form */}
-          <div className="bg-white rounded-lg shadow p-4 flex flex-col">
-            <h2 className="text-lg font-semibold mb-3">Create Nurse</h2>
-            <form onSubmit={handleCreateNurse} className="space-y-3">
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newNurse.name}
-                  onChange={(e) =>
-                    setNewNurse({ ...newNurse, name: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newNurse.email}
-                  onChange={(e) =>
-                    setNewNurse({ ...newNurse, email: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newNurse.password}
-                  onChange={(e) =>
-                    setNewNurse({ ...newNurse, password: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Contact Number"
-                  className="w-full p-2 border rounded text-sm"
-                  value={newNurse.contact}
-                  onChange={(e) =>
-                    setNewNurse({ ...newNurse, contact: e.target.value })
-                  }
-                  required
-                  pattern="[0-9]{10}"
-                />
-              </div>
+          <div className="bg-white rounded-lg shadow p-4 flex flex-col max-h-[400px] overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-2">Create Nurse</h2>
+            <form onSubmit={handleCreateNurse} className="space-y-2">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newNurse.name}
+                onChange={(e) =>
+                  setNewNurse({ ...newNurse, name: e.target.value })
+                }
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newNurse.email}
+                onChange={(e) =>
+                  setNewNurse({ ...newNurse, email: e.target.value })
+                }
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newNurse.password}
+                onChange={(e) =>
+                  setNewNurse({ ...newNurse, password: e.target.value })
+                }
+                required
+              />
+              <input
+                type="text"
+                placeholder="Contact Number"
+                className="w-full p-1.5 border rounded text-sm" // Reduced padding
+                value={newNurse.contact}
+                onChange={(e) =>
+                  setNewNurse({ ...newNurse, contact: e.target.value })
+                }
+                required
+                pattern="[0-9]{10}"
+              />
               <button
                 type="submit"
                 className="w-full bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-amber-600"
@@ -431,10 +425,11 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
       {selectedAppointment && (
-        <div className="fixed inset-0  bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-xl">
-            <div className="flex justify-between items-center mb-6">
+        <div className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-4 max-w-2xl w-full mx-4 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-gray-800">
                 Prescription Details
               </h3>
@@ -462,13 +457,13 @@ const AdminDashboard = () => {
             </div>
 
             {loadingPrescription ? (
-              <div className="text-center py-8 flex items-center justify-center space-x-2 text-gray-600">
+              <div className="text-center py-4 flex items-center justify-center space-x-2 text-gray-600">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
                 <span>Loading prescription...</span>
               </div>
             ) : prescription ? (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-500">
                       Patient
@@ -503,8 +498,8 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 pt-6">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                <div className="border-t border-gray-200 pt-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
                     Medications
                   </h4>
                   {prescription?.length > 0 ? (
@@ -512,10 +507,10 @@ const AdminDashboard = () => {
                       <table className="w-full">
                         <thead className="bg-amber-50">
                           <tr>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-amber-800">
+                            <th className="px-2 py-2 text-left text-sm font-medium text-amber-800">
                               Medicine
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-amber-800">
+                            <th className="px-2 py-2 text-left text-sm font-medium text-amber-800">
                               Dosage
                             </th>
                           </tr>
@@ -526,10 +521,10 @@ const AdminDashboard = () => {
                               key={index}
                               className="hover:bg-amber-50 transition-colors"
                             >
-                              <td className="px-4 py-3 text-gray-800 font-medium">
+                              <td className="px-2 py-2 text-gray-800 font-medium">
                                 {medicine.medicine_name}
                               </td>
-                              <td className="px-4 py-3 text-gray-600">
+                              <td className="px-2 py-2 text-gray-600">
                                 {medicine.medicine_dosage}
                               </td>
                             </tr>
@@ -538,14 +533,14 @@ const AdminDashboard = () => {
                       </table>
                     </div>
                   ) : (
-                    <div className="text-center py-6 bg-amber-50 rounded-lg">
+                    <div className="text-center py-4 bg-amber-50 rounded-lg">
                       <p className="text-gray-500">No medications prescribed</p>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8">
+              <div className="text-center py-4">
                 <div className="text-red-500 mb-2">
                   <svg
                     className="w-12 h-12 mx-auto"
