@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,20 @@ const Login = () => {
   const [message, setMessage] = useState({ type: "", content: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (message.content) {
+      timer = setTimeout(() => {
+        setMessage({ type: "", content: "" });
+      }, 3000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [message.content]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,11 +89,11 @@ const Login = () => {
     <>
       <Navbar />
       <div className="flex justify-center items-center h-[91.4vh] w-full bg-amber-50">
-        <div className="p-8 rounded-lg w-full max-w-md">
+        <div className="p-8 rounded-lg w-full max-w-md relative">
           <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
           {message.content && (
             <div
-              className={`mb-4 p-4 rounded text-center ${
+              className={`mb-6 absolute top-18 left-20 p-1 rounded-lg z-10 ${
                 message.type === "success"
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"

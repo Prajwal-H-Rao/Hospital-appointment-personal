@@ -13,6 +13,20 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    let timer;
+    if (message.content) {
+      timer = setTimeout(() => {
+        setMessage({ type: "", content: "" });
+      }, 3000); // Message will auto-close after 3 seconds
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [message.content]);
+
   // Authentication check and fetch appointments
   useEffect(() => {
     const token = Cookies.get("authToken");
@@ -149,7 +163,7 @@ const DoctorDashboard = () => {
       {/* Message Display */}
       {message.content && (
         <div
-          className={`mb-6 p-4 rounded-lg ${
+          className={`mb-6 absolute p-4 rounded-lg z-10 ${
             message.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"

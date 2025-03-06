@@ -18,12 +18,17 @@ const NurseDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let timer;
     if (message.content) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         setMessage({ type: "", content: "" });
-      });
-      return () => clearTimeout(timer);
+      }, 3000); // Message will auto-close after 3 seconds
     }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [message.content]);
 
   useEffect(() => {
@@ -188,173 +193,122 @@ const NurseDashboard = () => {
   return (
     <div className="h-screen bg-amber-50 p-8 flex flex-col">
       {/* Header */}
-      <div className="flex items-center mb-8">
-        <h1 className="text-3xl font-bold flex-grow">Nurse Dashboard</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Nurse Dashboard</h1>
         <button
           onClick={() => {
             Cookies.remove("authToken");
             navigate("/login");
           }}
-          className="bg-gradient-to-r from-amber-300 to-amber-400 w-28 h-10 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+          className="bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-2 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
         >
           Logout
         </button>
-        <div className="h-full min-w-5" />
       </div>
 
       {/* Message Display */}
-      <div className="flex">
-        {message.content && (
-          <div
-            className={`mb-4 p-4 rounded-lg ${
-              message.type === "success" ? " text-green-800" : " text-red-800"
-            }`}
-          >
-            {message.content}
-          </div>
-        )}
-      </div>
+      {message.content && (
+        <div
+          className={`mb-6 absolute p-4 rounded-lg z-10 ${
+            message.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message.content}
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="flex gap-8 flex-1 min-h-0">
         {/* Pending Requests */}
-        <div className="flex-1/2 bg-white rounded-lg shadow-md p-6 flex flex-col">
-          <h2 className="text-2xl font-semibold mb-6 text-center">
+        <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Pending Requests
           </h2>
-          <div className="flex-grow overflow-y-auto">
-            {/* Pending Requests Table */}
-            <table className="w-full">
-              <thead className="sticky top-0 bg-white">
-                <tr className="border-b-2 border-amber-100">
-                  <th className="p-3">Patient</th>
-                  <th className="p-3">Contact</th>
-                  <th className="p-3">Department</th>
-                  <th className="p-3">Date</th>
-                  <th className="p-3">Doctor</th>
-                  <th className="p-3">Criticality</th>
-                  <th className="p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {requests.map((request) => (
-                  <tr
-                    key={request.request_id}
-                    className="border-b border-amber-50 hover:bg-amber-50"
-                  >
-                    <td className="p-3 text-center">{request.name}</td>
-                    <td className="p-3 text-center">{request.contact}</td>
-                    <td className="p-3 text-center">{request.department}</td>
-                    <td className="p-3 text-center">
-                      {new Date(request.appointment_date).toLocaleDateString()}
-                    </td>
-
-                    {/* Doctor Selection Column */}
-                    <td className="p-3 text-center">
-                      <select
-                        className="w-full p-2 border rounded"
-                        onChange={(e) =>
-                          handleDoctorSelect(request.request_id, e.target.value)
-                        }
-                        value={request.selectedDoctorId}
-                      >
-                        <option value="">Select Doctor</option>
-                        {doctorsByDepartment[request.department]?.map(
-                          (doctor) => (
-                            <option
-                              key={doctor.doctor_id}
-                              value={doctor.doctor_id}
-                            >
-                              Dr. {doctor.name} ({doctor.specialization})
-                            </option>
-                          )
-                        )}
-                      </select>
-                    </td>
-
-                    {/* Criticality Selection Column */}
-                    <td className="p-3 text-center">
-                      <select
-                        className="w-full p-2 border rounded"
-                        onChange={(e) =>
-                          handleCriticalitySelect(
-                            request.request_id,
-                            e.target.value
-                          )
-                        }
-                        value={request.selectedCriticality}
-                      >
-                        <option value="">Select Criticality</option>
-                        <option value="low">Low</option>
-                        <option value="mid">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                    </td>
-
-                    {/* Approve Button Column */}
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => approveRequest(request)}
-                        disabled={
-                          loading ||
-                          !request.selectedDoctorId ||
-                          !request.selectedCriticality
-                        }
-                        className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 disabled:opacity-50 w-full"
-                      >
-                        {loading ? "Processing..." : "Approve"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Appointments & Payment */}
-        <div className="flex-1/3 flex flex-col min-h-0 gap-6">
-          {/* Appointments List */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col flex-1 min-h-0">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
-              Scheduled Appointments
-            </h2>
-            <div className="overflow-y-auto flex-1">
-              <table className="w-full">
+          <div className="flex-grow overflow-hidden">
+            <div className="h-full overflow-y-auto">
+              <table className="w-full min-w-[1000px]">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b-2 border-amber-100">
-                    <th className="p-3">Patient</th>
-                    <th className="p-3">Date</th>
-                    <th className="p-3">Time</th>
-                    <th className="p-3">Status</th>
+                    <th className="p-3 text-left text-gray-600">Patient</th>
+                    <th className="p-3 text-left text-gray-600">Contact</th>
+                    <th className="p-3 text-left text-gray-600">Department</th>
+                    <th className="p-3 text-left text-gray-600">Date</th>
+                    <th className="p-3 text-left text-gray-600">Doctor</th>
+                    <th className="p-3 text-left text-gray-600">Criticality</th>
+                    <th className="p-3 text-right text-gray-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {appointments.map((appointment) => (
+                  {requests.map((request) => (
                     <tr
-                      key={appointment.appointment_id}
+                      key={request.request_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td className="p-3 text-center">
-                        {appointment.patient_name}
+                      <td className="p-3 text-gray-700">{request.name}</td>
+                      <td className="p-3 text-gray-600">{request.contact}</td>
+                      <td className="p-3 text-gray-600">
+                        {request.department}
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-3 text-gray-600">
                         {new Date(
-                          appointment.appointment_date
+                          request.appointment_date
                         ).toLocaleDateString()}
                       </td>
-                      <td className="p-3 text-center">
-                        {appointment.appointment_time}
-                      </td>
-                      <td className="p-3 text-center">
-                        <span
-                          className={`px-2 py-1 rounded ${
-                            appointment.payment_status === "paid"
-                              ? "bg-green-200 text-green-800"
-                              : "bg-red-200 text-red-800"
-                          }`}
+                      <td className="p-3">
+                        <select
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                          onChange={(e) =>
+                            handleDoctorSelect(
+                              request.request_id,
+                              e.target.value
+                            )
+                          }
+                          value={request.selectedDoctorId}
                         >
-                          {appointment.payment_status}
-                        </span>
+                          <option value="">Select Doctor</option>
+                          {doctorsByDepartment[request.department]?.map(
+                            (doctor) => (
+                              <option
+                                key={doctor.doctor_id}
+                                value={doctor.doctor_id}
+                              >
+                                Dr. {doctor.name} ({doctor.specialization})
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </td>
+                      <td className="p-3">
+                        <select
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                          onChange={(e) =>
+                            handleCriticalitySelect(
+                              request.request_id,
+                              e.target.value
+                            )
+                          }
+                          value={request.selectedCriticality}
+                        >
+                          <option value="">Criticality</option>
+                          <option value="low">Low</option>
+                          <option value="mid">Medium</option>
+                          <option value="high">High</option>
+                        </select>
+                      </td>
+                      <td className="p-3 text-right">
+                        <button
+                          onClick={() => approveRequest(request)}
+                          disabled={
+                            loading ||
+                            !request.selectedDoctorId ||
+                            !request.selectedCriticality
+                          }
+                          className="bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-300 disabled:opacity-50"
+                        >
+                          {loading ? "Processing..." : "Approve"}
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -362,42 +316,97 @@ const NurseDashboard = () => {
               </table>
             </div>
           </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="w-96 flex flex-col gap-6">
+          {/* Appointments List */}
+          {/* Appointments List */}
+          <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col flex-1">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Scheduled Appointments
+            </h2>
+            <div className="flex-1 overflow-y-scroll h-[300px]">
+              {" "}
+              {/* Fixed height container */}
+              <div className="max-h-[7rem]">
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-white">
+                    <tr className="border-b-2 border-amber-100">
+                      <th className="p-3 text-left text-gray-600">Patient</th>
+                      <th className="p-3 text-left text-gray-600">Date</th>
+                      <th className="p-3 text-left text-gray-600">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className=" w-full overflow-y-auto">
+                    {/* Approx height for 2 rows */}
+                    {appointments.map((appointment) => (
+                      <tr
+                        key={appointment.appointment_id}
+                        className="border-b border-amber-50 hover:bg-amber-50"
+                      >
+                        <td className="p-3 text-gray-700">
+                          {appointment.patient_name}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {new Date(
+                            appointment.appointment_date
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded ${
+                              appointment.payment_status === "paid"
+                                ? "bg-green-200 text-green-800"
+                                : "bg-red-200 text-red-800"
+                            }`}
+                          >
+                            {appointment.payment_status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           {/* Payment Update Form */}
-          {/* Payment Update Form */}
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-2xl font-semibold mb-4 text-center">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Update Payment
             </h2>
-            <form onSubmit={handlePaymentUpdate} className="space-y-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm">
-                <div className="space-y-1">
-                  <label className="block text-sm">Appointment</label>
-                  <select
-                    value={paymentData.appointment_id}
-                    onChange={(e) =>
-                      setPaymentData({
-                        ...paymentData,
-                        appointment_id: e.target.value,
-                      })
-                    }
-                    className="w-full p-1 text-sm border rounded"
-                    required
-                  >
-                    <option value="">Select Appointment</option>
-                    {appointments.map((app) => (
-                      <option
-                        key={app.appointment_id}
-                        value={app.appointment_id}
-                      >
-                        {app.patient_name} -
-                        {new Date(app.appointment_date).toLocaleDateString()}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            <form onSubmit={handlePaymentUpdate} className="space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-2">Appointment</label>
+                <select
+                  value={paymentData.appointment_id}
+                  onChange={(e) =>
+                    setPaymentData({
+                      ...paymentData,
+                      appointment_id: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  required
+                >
+                  <option value="">Select Appointment</option>
+                  {appointments.map((app) => (
+                    <option key={app.appointment_id} value={app.appointment_id}>
+                      {app.patient_name} -{" "}
+                      {new Date(app.appointment_date).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                <div className="space-y-1">
-                  <label className="block text-sm">Status</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 mb-2">Status</label>
                   <select
                     value={paymentData.payment_status}
                     onChange={(e) =>
@@ -406,7 +415,7 @@ const NurseDashboard = () => {
                         payment_status: e.target.value,
                       })
                     }
-                    className="w-full p-1 text-sm border rounded"
+                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                     required
                   >
                     <option value="paid">Paid</option>
@@ -414,22 +423,8 @@ const NurseDashboard = () => {
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="block text-sm">Amount</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={paymentData.amount}
-                    onChange={(e) =>
-                      setPaymentData({ ...paymentData, amount: e.target.value })
-                    }
-                    className="w-full p-1 text-sm border rounded"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm">Method</label>
+                <div>
+                  <label className="block text-gray-700 mb-2">Method</label>
                   <select
                     value={paymentData.payment_method}
                     onChange={(e) =>
@@ -438,7 +433,7 @@ const NurseDashboard = () => {
                         payment_method: e.target.value,
                       })
                     }
-                    className="w-full p-1 text-sm border rounded"
+                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                     required
                   >
                     <option value="cash">Cash</option>
@@ -447,10 +442,24 @@ const NurseDashboard = () => {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-gray-700 mb-2">Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={paymentData.amount}
+                  onChange={(e) =>
+                    setPaymentData({ ...paymentData, amount: e.target.value })
+                  }
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  required
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-amber-300 to-amber-400 h-8 rounded text-white text-sm font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-md transition-all duration-300 disabled:opacity-75"
               >
                 {loading ? "Updating..." : "Update Payment"}
               </button>
