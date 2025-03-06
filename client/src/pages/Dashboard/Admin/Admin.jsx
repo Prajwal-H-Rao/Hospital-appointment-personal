@@ -39,9 +39,15 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         const [appsRes, docsRes, nursesRes] = await Promise.all([
-          axios.get("http://localhost:3000/admin/appointments"),
-          axios.get("http://localhost:3000/admin/doctors"),
-          axios.get("http://localhost:3000/admin/nurses"),
+          axios.get(
+            "https://appointment-backend-x08l.onrender.com/admin/appointments"
+          ),
+          axios.get(
+            "https://appointment-backend-x08l.onrender.com/admin/doctors"
+          ),
+          axios.get(
+            "https://appointment-backend-x08l.onrender.com/admin/nurses"
+          ),
         ]);
         setAppointments(appsRes.data);
         setDoctors(docsRes.data);
@@ -58,7 +64,7 @@ const AdminDashboard = () => {
     try {
       setLoadingPrescription(true);
       const response = await axios.get(
-        `http://localhost:3000/admin/prescriptions/${appointmentId}`
+        `https://appointment-backend-x08l.onrender.com/admin/prescriptions/${appointmentId}`
       );
       setPrescription(response.data);
       console.log(response.data);
@@ -73,7 +79,10 @@ const AdminDashboard = () => {
   const handleCreateDoctor = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/admin/doctors", newDoctor);
+      await axios.post(
+        "https://appointment-backend-x08l.onrender.com/admin/doctors",
+        newDoctor
+      );
       setMessage({ type: "success", content: "Doctor created successfully" });
       setNewDoctor({
         name: "",
@@ -82,7 +91,9 @@ const AdminDashboard = () => {
         password: "",
         contact: "",
       });
-      const res = await axios.get("http://localhost:3000/admin/doctors");
+      const res = await axios.get(
+        "https://appointment-backend-x08l.onrender.com/admin/doctors"
+      );
       setDoctors(res.data);
     } catch (error) {
       setMessage({ type: "error", content: "Failed to create doctor" });
@@ -92,10 +103,15 @@ const AdminDashboard = () => {
   const handleCreateNurse = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/admin/nurses", newNurse);
+      await axios.post(
+        "https://appointment-backend-x08l.onrender.com/admin/nurses",
+        newNurse
+      );
       setMessage({ type: "success", content: "Nurse created successfully" });
       setNewNurse({ name: "", email: "", password: "", contact: "" });
-      const res = await axios.get("http://localhost:3000/admin/nurses");
+      const res = await axios.get(
+        "https://appointment-backend-x08l.onrender.com/admin/nurses"
+      );
       setNurses(res.data);
     } catch (error) {
       setMessage({ type: "error", content: "Failed to create nurse" });

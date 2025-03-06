@@ -41,7 +41,7 @@ const DoctorDashboard = () => {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/treat/appointments/${doctorId}`,
+          `https://appointment-backend-x08l.onrender.com/treat/appointments/${doctorId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const DoctorDashboard = () => {
       const doctorId = Cookies.get("doctorId");
 
       await axios.post(
-        "http://localhost:3000/treat/prescriptions",
+        "https://appointment-backend-x08l.onrender.com/treat/prescriptions",
         {
           appointment_id: prescription.appointment_id,
           doctor_id: doctorId,
@@ -123,7 +123,7 @@ const DoctorDashboard = () => {
         const token = Cookies.get("authToken");
 
         await axios.delete(
-          `http://localhost:3000/treat/requests/appointment/${appointmentId}`,
+          `https://appointment-backend-x08l.onrender.com/treat/requests/appointment/${appointmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

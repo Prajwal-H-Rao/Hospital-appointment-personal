@@ -30,10 +30,13 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://appointment-backend-x08l.onrender.com/login",
+        {
+          email,
+          password,
+        }
+      );
 
       // Store authentication data
       Cookies.set("authToken", response.data.token, {

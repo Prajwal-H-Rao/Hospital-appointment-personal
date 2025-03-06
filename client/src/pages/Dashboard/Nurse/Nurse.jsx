@@ -45,7 +45,7 @@ const NurseDashboard = () => {
       try {
         // Fetch doctors and group by department
         const doctorsRes = await axios.get(
-          "http://localhost:3000/manage/doctors",
+          "https://appointment-backend-x08l.onrender.com/manage/doctors",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -60,7 +60,7 @@ const NurseDashboard = () => {
 
         // Fetch pending requests
         const requestsRes = await axios.get(
-          "http://localhost:3000/manage/requests",
+          "https://appointment-backend-x08l.onrender.com/manage/requests",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -75,7 +75,7 @@ const NurseDashboard = () => {
 
         // Fetch appointments
         const appsRes = await axios.get(
-          `http://localhost:3000/manage/nurse/${nurseId}`,
+          `https://appointment-backend-x08l.onrender.com/manage/nurse/${nurseId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setAppointments(appsRes.data.data);
@@ -120,7 +120,7 @@ const NurseDashboard = () => {
     try {
       const token = Cookies.get("authToken");
       await axios.post(
-        "http://localhost:3000/manage/appointments",
+        "https://appointment-backend-x08l.onrender.com/manage/appointments",
         {
           request_id: request.request_id,
           patient_name: request.name,
@@ -136,7 +136,9 @@ const NurseDashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const res = await axios.get(
-        `http://localhost:3000/manage/nurse/${Cookies.get("nurseId")}`,
+        `https://appointment-backend-x08l.onrender.com/manage/nurse/${Cookies.get(
+          "nurseId"
+        )}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -160,7 +162,7 @@ const NurseDashboard = () => {
     try {
       const token = Cookies.get("authToken");
       await axios.put(
-        "http://localhost:3000/manage/appointments/payment",
+        "https://appointment-backend-x08l.onrender.com/manage/appointments/payment",
         paymentData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -177,7 +179,9 @@ const NurseDashboard = () => {
 
       // Refresh appointments
       const res = await axios.get(
-        `http://localhost:3000/manage/nurse/${Cookies.get("nurseId")}`,
+        `https://appointment-backend-x08l.onrender.com/manage/nurse/${Cookies.get(
+          "nurseId"
+        )}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

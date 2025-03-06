@@ -18,7 +18,7 @@ const AppointmentForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/appointment/request",
+        "https://appointment-backend-x08l.onrender.com/appointment/request",
         formData
       );
 

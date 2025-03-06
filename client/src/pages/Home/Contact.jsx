@@ -26,7 +26,10 @@ const ContactUs = () => {
     setIsSubmitting(true);
 
     try {
-      await axios.post("http://localhost:3000/contact", formData);
+      await axios.post(
+        "https://appointment-backend-x08l.onrender.com/contact",
+        formData
+      );
       setMessage({
         type: "success",
         content: "Your message has been sent successfully!",
