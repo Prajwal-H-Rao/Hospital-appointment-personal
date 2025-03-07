@@ -27,6 +27,15 @@ const AdminDashboard = () => {
   const [message, setMessage] = useState({ type: "", content: "" });
 
   useEffect(() => {
+    if (message.content) {
+      const timer = setTimeout(() => {
+        setMessage({ type: "", content: "" });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message.content]);
+
+  useEffect(() => {
     const token = Cookies.get("authToken");
     const role = Cookies.get("userRole");
     const adminId = Cookies.get("adminId");
@@ -307,60 +316,69 @@ const AdminDashboard = () => {
         {/* Forms Section */}
         <div className="w-80 flex flex-col gap-4 min-h-0">
           {/* Create Doctor Form */}
-          <div className="bg-white rounded-lg shadow p-3 flex flex-col max-h-[400px] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-1">Create Doctor</h2>
-            <form onSubmit={handleCreateDoctor} className="space-y-2">
-              <input
-                type="text"
-                placeholder="Full Name"
-                className="w-full p-1.5 border rounded text-sm" // Reduced padding
-                value={newDoctor.name}
-                onChange={(e) =>
-                  setNewDoctor({ ...newDoctor, name: e.target.value })
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder="Department"
-                className="w-full p-1.5 border rounded text-sm" // Reduced padding
-                value={newDoctor.department}
-                onChange={(e) =>
-                  setNewDoctor({ ...newDoctor, department: e.target.value })
-                }
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full p-1.5 border rounded text-sm" // Reduced padding
-                value={newDoctor.email}
-                onChange={(e) =>
-                  setNewDoctor({ ...newDoctor, email: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full p-1.5 border rounded text-sm" // Reduced padding
-                value={newDoctor.password}
-                onChange={(e) =>
-                  setNewDoctor({ ...newDoctor, password: e.target.value })
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder="Contact Number"
-                className="w-full p-1.5 border rounded text-sm" // Reduced padding
-                value={newDoctor.contact}
-                onChange={(e) =>
-                  setNewDoctor({ ...newDoctor, contact: e.target.value })
-                }
-                required
-                pattern="[0-9]{10}"
-              />
+          <div className="bg-white rounded-lg shadow p-4 flex flex-col">
+            <h2 className="text-lg font-semibold mb-3">Create Doctor</h2>
+            <form onSubmit={handleCreateDoctor} className="space-y-3">
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  className="w-full p-2 border rounded text-sm"
+                  value={newDoctor.name}
+                  onChange={(e) =>
+                    setNewDoctor({ ...newDoctor, name: e.target.value })
+                  }
+                  required
+                />
+                {/* Department Dropdown */}
+                <select
+                  className="w-full p-2 border rounded text-sm"
+                  value={newDoctor.department}
+                  onChange={(e) =>
+                    setNewDoctor({ ...newDoctor, department: e.target.value })
+                  }
+                  required
+                >
+                  <option value="" disabled>
+                    Select Department
+                  </option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="General-Medicine">General Medicine</option>
+                </select>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="w-full p-2 border rounded text-sm"
+                  value={newDoctor.email}
+                  onChange={(e) =>
+                    setNewDoctor({ ...newDoctor, email: e.target.value })
+                  }
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="w-full p-2 border rounded text-sm"
+                  value={newDoctor.password}
+                  onChange={(e) =>
+                    setNewDoctor({ ...newDoctor, password: e.target.value })
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Contact Number"
+                  className="w-full p-2 border rounded text-sm"
+                  value={newDoctor.contact}
+                  onChange={(e) =>
+                    setNewDoctor({ ...newDoctor, contact: e.target.value })
+                  }
+                  required
+                  pattern="[0-9]{10}"
+                />
+              </div>
               <button
                 type="submit"
                 className="w-full bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-amber-600"
