@@ -490,7 +490,7 @@ const DoctorDashboard = () => {
                       Doctor
                     </label>
                     <p className="text-gray-800 font-medium">
-                      {prescriptionPast[0].doctor_name}
+                      {prescriptionPast[0]?.doctor_name}
                     </p>
                   </div>
                   <div className="space-y-1">
