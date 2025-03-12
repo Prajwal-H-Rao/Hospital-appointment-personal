@@ -108,7 +108,7 @@ const DoctorDashboard = () => {
         "https://appointment-backend-x08l.onrender.com/treat/prescriptions",
         {
           appointment_id: prescription.appointment_id,
-          doctor_id: doctorId,
+          user_id: doctorId,
           medicines: prescription.medicines,
         },
         {
@@ -214,18 +214,20 @@ const DoctorDashboard = () => {
                 <tbody>
                   {appointments.map((appointment) => (
                     <tr
-                      onClick={() => {
-                        setSelectedAppointment(appointment);
-                        fetchPrescription(
-                          appointment.patient_name,
-                          appointment.patient_contact,
-                          appointment.appointment_id
-                        );
-                      }}
                       key={appointment.appointment_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td className="p-3 text-gray-700">
+                      <td
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          fetchPrescription(
+                            appointment.patient_name,
+                            appointment.patient_contact,
+                            appointment.appointment_id
+                          );
+                        }}
+                        className="p-3 text-gray-700"
+                      >
                         {appointment.patient_name}
                       </td>
                       <td className="p-3 text-gray-600">
