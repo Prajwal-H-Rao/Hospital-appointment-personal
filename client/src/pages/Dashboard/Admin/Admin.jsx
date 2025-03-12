@@ -85,26 +85,49 @@ const AdminDashboard = () => {
 
   const handleCreateDoctor = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(
+    axios
+      .post(
         "https://appointment-backend-x08l.onrender.com/admin/doctors",
         newDoctor
-      );
-      setMessage({ type: "success", content: "Doctor created successfully" });
-      setNewDoctor({
-        name: "",
-        department: "",
-        email: "",
-        password: "",
-        contact: "",
+      )
+      .then(async () => {
+        setMessage({
+          type: "success",
+          content: "Doctor created successfully",
+        });
+        setNewDoctor({
+          name: "",
+          department: "",
+          email: "",
+          password: "",
+          contact: "",
+        });
+        const res = await axios.get(
+          "https://appointment-backend-x08l.onrender.com/admin/doctors"
+        );
+        setDoctors(res.data);
+      })
+      .catch((error) => {
+        let errorMessage = "Failed to create doctor";
+
+        if (error.response) {
+          // Attempt to parse the response data
+          try {
+            const responseData = JSON.parse(error.response.data);
+            errorMessage =
+              responseData.message || responseData.error || errorMessage;
+          } catch (parseError) {
+            errorMessage = error.message;
+          }
+        } else {
+          errorMessage = error.message;
+        }
+        console.log(error.response.data);
+        setMessage({
+          type: "error",
+          content: `Failed to create doctor ${error.response.data.error}`,
+        });
       });
-      const res = await axios.get(
-        "https://appointment-backend-x08l.onrender.com/admin/doctors"
-      );
-      setDoctors(res.data);
-    } catch (error) {
-      setMessage({ type: "error", content: "Failed to create doctor" });
-    }
   };
 
   const handleCreateNurse = async (e) => {
@@ -178,7 +201,10 @@ const AdminDashboard = () => {
                         Date
                       </th>
                       <th className="p-2 text-left text-gray-600 font-medium">
-                        Status
+                        Appointment Status
+                      </th>
+                      <th className="p-2 text-left text-gray-600 font-medium">
+                        Payment Status
                       </th>
                     </tr>
                   </thead>
@@ -207,6 +233,17 @@ const AdminDashboard = () => {
                             month: "short",
                             day: "numeric",
                           })}
+                        </td>
+                        <td className="p-2">
+                          <span
+                            className={`px-2 py-1 rounded-full text-sm font-medium ${
+                              appointment.appointment_status === "approved"
+                                ? "bg-yellow-100 text-red-700"
+                                : "bg-green-100 text-green-700"
+                            }`}
+                          >
+                            {appointment.appointment_status}
+                          </span>
                         </td>
                         <td className="p-2">
                           <span
