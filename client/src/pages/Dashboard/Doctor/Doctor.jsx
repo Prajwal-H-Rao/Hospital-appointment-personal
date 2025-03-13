@@ -218,17 +218,7 @@ const DoctorDashboard = () => {
                       key={appointment.appointment_id}
                       className="border-b border-amber-50 hover:bg-amber-50"
                     >
-                      <td
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          fetchPrescription(
-                            appointment.patient_name,
-                            appointment.patient_contact,
-                            appointment.appointment_id
-                          );
-                        }}
-                        className="p-3 text-gray-700"
-                      >
+                      <td className="p-3 text-gray-700">
                         {appointment.patient_name}
                       </td>
                       <td className="p-3 text-gray-600">
@@ -240,27 +230,60 @@ const DoctorDashboard = () => {
                         {appointment.appointment_time}
                       </td>
                       <td className="p-3 text-right">
-                        <button
-                          onClick={() =>
-                            handleDeleteAppointment(appointment.appointment_id)
-                          }
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                        <div className="flex justify-end space-x-2">
+                          {/* View Prescriptions Button */}
+                          <button
+                            onClick={() => {
+                              setSelectedAppointment(appointment);
+                              fetchPrescription(
+                                appointment.patient_name,
+                                appointment.patient_contact,
+                                appointment.appointment_id
+                              );
+                            }}
+                            className="text-blue-500 hover:text-blue-700 transition-colors"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            onClick={() =>
+                              handleDeleteAppointment(
+                                appointment.appointment_id
+                              )
+                            }
+                            className="text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
