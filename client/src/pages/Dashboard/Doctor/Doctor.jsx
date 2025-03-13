@@ -70,6 +70,7 @@ const DoctorDashboard = () => {
       const response = await axios.get(
         `https://appointment-backend-x08l.onrender.com/treat/appointments/${patient_name}/${patient_contact}/${appointment_id}`
       );
+      console.log(response.data);
       setPrescriptionPast(response.data);
     } catch (error) {
       setMessage({ type: "error", content: "Failed to fetch prescription" });
@@ -443,10 +444,10 @@ const DoctorDashboard = () => {
       </div>
       {selectedAppointment && (
         <div className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-4 max-w-2xl w-full mx-4 shadow-xl">
+          <div className="bg-white rounded-2xl p-4 max-w-2xl w-full mx-4 shadow-xl max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-gray-800">
-                Prescription Details
+                Prescription History
               </h3>
               <button
                 onClick={() => {
@@ -471,109 +472,139 @@ const DoctorDashboard = () => {
               </button>
             </div>
 
-            {loadingPrescription ? (
-              <div className="text-center py-4 flex items-center justify-center space-x-2 text-gray-600">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
-                <span>Loading prescription...</span>
-              </div>
-            ) : prescriptionPast ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-500">
-                      Patient
-                    </label>
-                    <p className="text-gray-800 font-medium">
-                      {selectedAppointment.patient_name}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-500">
-                      Doctor
-                    </label>
-                    <p className="text-gray-800 font-medium">
-                      {prescriptionPast[0]?.doctor_name}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-500">
-                      Date
-                    </label>
-                    <p className="text-gray-800">
-                      {new Date(
-                        selectedAppointment.appointment_date
-                      ).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
+            <div className="flex-1 overflow-y-auto pr-2">
+              {" "}
+              {/* Scrollable container */}
+              {loadingPrescription ? (
+                <div className="text-center py-4 flex items-center justify-center space-x-2 text-gray-600">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
+                  <span>Loading prescription history...</span>
                 </div>
+              ) : prescriptionPast && prescriptionPast.length > 0 ? (
+                <div className="space-y-6 pb-2">
+                  {prescriptionPast.map((appointmentGroup) => (
+                    <div
+                      key={appointmentGroup.appointment_id}
+                      className="bg-amber-50 rounded-lg p-4"
+                    >
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-500 font-medium">
+                            Patient
+                          </p>
+                          <p className="text-gray-800 font-semibold">
+                            {selectedAppointment.patient_name}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 font-medium">
+                            Doctor
+                          </p>
+                          <p className="text-gray-800 font-semibold">
+                            {appointmentGroup.doctor_name}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 font-medium">
+                            Date
+                          </p>
+                          <p className="text-gray-800 font-semibold">
+                            {(() => {
+                              const date = new Date(
+                                appointmentGroup.appointment_date
+                              );
+                              if (isNaN(date)) return "N/A";
 
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                    Medications
-                  </h4>
-                  {prescriptionPast?.length > 0 ? (
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead className="bg-amber-50">
-                          <tr>
-                            <th className="px-2 py-2 text-left text-sm font-medium text-amber-800">
-                              Medicine
-                            </th>
-                            <th className="px-2 py-2 text-left text-sm font-medium text-amber-800">
-                              Dosage
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {prescriptionPast.map((medicine, index) => (
-                            <tr
-                              key={index}
-                              className="hover:bg-amber-50 transition-colors"
-                            >
-                              <td className="px-2 py-2 text-gray-800 font-medium">
-                                {medicine.medicine_name}
-                              </td>
-                              <td className="px-2 py-2 text-gray-600">
-                                {medicine.medicine_dosage}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                              const day = date
+                                .getUTCDate()
+                                .toString()
+                                .padStart(2, "0");
+                              const month = (date.getUTCMonth() + 1)
+                                .toString()
+                                .padStart(2, "0");
+                              const year = date
+                                .getUTCFullYear()
+                                .toString()
+                                .slice(-2);
+
+                              return `${day}/${month}/${year}`;
+                            })()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-amber-100 pt-4">
+                        <h4 className="text-lg font-semibold text-gray-800 mb-3">
+                          Prescribed Medications
+                        </h4>
+                        {appointmentGroup.prescriptions.length > 0 ? (
+                          <div className="overflow-y-auto max-h-[300px]">
+                            {" "}
+                            {/* Scrollable prescriptions */}
+                            <table className="w-full">
+                              <thead className="bg-amber-100 sticky top-0">
+                                <tr>
+                                  <th className="px-3 py-2 text-left text-sm font-medium text-amber-800">
+                                    Medicine
+                                  </th>
+                                  <th className="px-3 py-2 text-left text-sm font-medium text-amber-800">
+                                    Dosage
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-amber-50">
+                                {appointmentGroup.prescriptions.map(
+                                  (prescription, idx) => (
+                                    <tr
+                                      key={`${appointmentGroup.appointment_id}-${idx}`}
+                                      className="hover:bg-amber-100"
+                                    >
+                                      <td className="px-3 py-2 text-gray-800 font-medium">
+                                        {prescription.medicine_name}
+                                      </td>
+                                      <td className="px-3 py-2 text-gray-600">
+                                        {prescription.medicine_dosage}
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div className="text-center py-3 bg-white rounded-lg">
+                            <p className="text-gray-500 text-sm">
+                              No medications recorded
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-4 bg-amber-50 rounded-lg">
-                      <p className="text-gray-500">No medications prescribed</p>
-                    </div>
-                  )}
+                  ))}
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <div className="text-red-500 mb-2">
-                  <svg
-                    className="w-12 h-12 mx-auto"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="text-amber-500 mb-3">
+                    <svg
+                      className="w-12 h-12 mx-auto"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 font-medium">
+                    No prescription history found
+                  </p>
                 </div>
-                <p className="text-gray-600 font-medium">
-                  No prescription found for this appointment
-                </p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
